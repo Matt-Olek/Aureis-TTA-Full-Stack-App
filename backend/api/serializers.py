@@ -63,6 +63,9 @@ class ApplicantSerializer(serializers.ModelSerializer):
     skills = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Skill.objects.all(), required=False
     )
+    formation = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Formation.objects.all(), required=True
+    )
 
     class Meta:
         model = Applicant

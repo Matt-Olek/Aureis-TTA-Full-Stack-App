@@ -1,5 +1,5 @@
 import django_filters
-from matching.models import match_applicant, Applicant, Skill
+from matching.models import match_applicant, Applicant, Skill, Formation
 
 
 class MatchApplicantFilter(django_filters.FilterSet):
@@ -7,8 +7,13 @@ class MatchApplicantFilter(django_filters.FilterSet):
     offer = django_filters.CharFilter(
         field_name="offer__title", lookup_expr="icontains"
     )
+    formation = django_filters.ModelChoiceFilter(
+        field_name="application__applicant__formation",
+        queryset=Formation.objects.all(),
+        lookup_expr="exact",
+    )
     company = django_filters.CharFilter(
-        field_name="offer__company__name", lookup_expr="icontains"
+        field_name="offer__company__name", lookup_expr="exact"
     )
     application = django_filters.CharFilter(
         field_name="application__applicant__last_name", lookup_expr="icontains"
@@ -61,6 +66,8 @@ class MatchApplicantFilter(django_filters.FilterSet):
         model = match_applicant
         fields = [
             "offer",
+            "formation",
+            "company",
             "application",
             "status",
             "first_name",

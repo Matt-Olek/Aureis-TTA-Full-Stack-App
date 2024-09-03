@@ -27,6 +27,7 @@ const ApplicantForm = () => {
   const [contractTypes, setContractTypes] = useState([]);
   const [applicantId, setApplicantId] = useState(null);
   const [duration, setDuration] = useState([]);
+  const [formations, setFormations] = useState([]);
 
   useEffect(() => {
     Axios.get('/user/info/').then((response) => {
@@ -36,27 +37,28 @@ const ApplicantForm = () => {
         last_name: response.data.last_name,
         email: response.data.email,
       });
-      console.log(response.data);
     });
     Axios.get('/sector/').then((response) => {
-      console.log(response.data);
       setSectors(response.data);
     });
     Axios.get('/choices/', { params: { 'target_educational_level': true } }).then((response) => {
       setTargetEducationalLevels(response.data);
-      console.log(response.data);
     });
     Axios.get('/choices/', { params: { 'contract_type': true } }).then((response) => {
       setContractTypes(response.data);
     });
     Axios.get('/choices/', { params: { 'duration': true } }).then((response) => {
-      console.log('Duration:', response.data);
       setDuration(response.data);
     });
+    Axios.get('/formations/').then((response) => {
+      setFormations(response.data);
+    });
+
 
     Axios.get('/applicants/registration/').then((response) => {
       if (response.data) {
         setInitialValues(response.data.applicant);
+        console.log(response.data.applicant);
         setApplicantId(response.data.applicant.id);
       }
     });
@@ -105,9 +107,27 @@ const ApplicantForm = () => {
     enableReinitialize={true}
     onSubmit={handleSubmit}
   >
-    {({ values, setFieldValue }) => (
+    {() => (
       <Form className="p-6 bg-stone-900 text-white rounded-lg shadow-md space-y-4 w-1/2 mx-auto">
-          
+        <p className=" mt-10 font-bold mb-10 text-center manrope">Veuillez remplir les champs suivants avec attention</p>
+        <div className="form-control">
+          <label htmlFor="formation" className="label">
+            <span className="label-text">Formation</span>
+          </label>
+          <Field as="select" name="formation" className="select select-bordered w-full">
+            <option value="">Sélectionnez la formation dans laquelle vous êtes inscrit</option>
+            {formations.map((formation) => (
+              <option key={formation.id} value={formation.id}>
+                {formation.name}
+              </option>
+            ))}
+          </Field>
+          <ErrorMessage
+            name="formation"
+            component="div"
+            className="text-error mt-1"
+          />
+        </div>
         <div className="form-control">
           <label htmlFor="first_name" className="label">
             <span className="label-text">Prénom</span>
@@ -198,7 +218,7 @@ const ApplicantForm = () => {
             <span className="label-text">Niveau visé</span>
           </label>
           <Field as="select" name="target_educational_level" className="select select-bordered w-full">
-            <option value="">Sélectionnez le niveau d'études visé</option>
+            <option value="">Sélectionnez le niveau d&apos;études visé</option>
             {targetEducationalLevels.map((level) => (
               <option key={level[0]} value={level[0]} >
                 {level[1]}
@@ -319,8 +339,8 @@ const ApplicantForm = () => {
           </label>
         </div>
   
-        <button type="submit" className="btn btn-primary w-full">
-          Submit
+        <button type="submit" className="btn w-full bg-green-300 text-white">
+          Enregistrer
         </button>
       </Form>
     )}

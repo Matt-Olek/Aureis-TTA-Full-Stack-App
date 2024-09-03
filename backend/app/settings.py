@@ -10,7 +10,7 @@ SECRET_KEY = "django-insecure-tneln6)=bhhbk131(h)hy+2p6t(7z^maepx_^e+3_6kr7!_v6p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "37.187.49.148", "django", "nginx"]
 
 DOMAIN = "http://localhost:5173"
 
@@ -18,6 +18,7 @@ STATIC_ROOT = BASE_DIR / "static"
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -34,10 +35,11 @@ INSTALLED_APPS = [
 ]
 
 # CORS configuration
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://37.187.49.148",
+    "http://37.187.49.148",  # Your frontend URL
+    "http://localhost:5173",  # If you're also running locally for development
 ]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -46,15 +48,16 @@ SESSION_COOKIE_SECURE = False  # Change to True in production with HTTPS
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",  # Ensure security headers are applied first
+    "corsheaders.middleware.CorsMiddleware",  # CORS middleware after SecurityMiddleware
+    "django.contrib.sessions.middleware.SessionMiddleware",  # Handles session management
+    "django.middleware.common.CommonMiddleware",  # Basic request/response management
+    "django.middleware.csrf.CsrfViewMiddleware",  # Handles CSRF protection
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # Handles user authentication
+    "django.contrib.messages.middleware.MessageMiddleware",  # Enables Django's messaging framework
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",  # Protects against clickjacking
 ]
+
 
 ROOT_URLCONF = "app.urls"
 
@@ -118,6 +121,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -148,10 +152,11 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "api.CustomUser"
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "trouvetonalternanceweb@gmail.com"
-EMAIL_HOST_PASSWORD = "dunk uyuo hyzb rshk"
+EMAIL_HOST_PASSWORD = "dgfw ycov trzq mpvi"
 DEFAULT_FROM_EMAIL = "trouvetonalternanceweb@gmail.com"
 EMAIL_USE_TLS = True  # Use TLS instead of SSL for Gmail
+
+ASGI_APPLICATION = "app.asgi.application"

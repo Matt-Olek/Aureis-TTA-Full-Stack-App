@@ -35,11 +35,11 @@ const Navbar = () => {
                                 <ul tabIndex="0" className="dropdown-content menu p-2 shadow bg-stone-800 text-gray-100 rounded-box w-48 z-10">
                                     {user.is_staff || user.is_superuser ? (
                                         <>
-                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/applicant-management')}>Management Candidats</a></li>
-                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/company-management')}>Management Entreprises</a></li>
-                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/match-management')}>Management Matchs</a></li>
-                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/offer-management')}>Management Offres</a></li>
-                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/formation-management')}>Management Formations</a></li>
+                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/applicant-management')}>Candidats</a></li>
+                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/company-management')}>Entreprises</a></li>
+                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/match-management')}>Matchs</a></li>
+                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/offer-management')}>Offres</a></li>
+                                            <li><a className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900" onClick={() => navigate('/admin/formation-management')}>Formations</a></li>
                                         </>
                                     ) : (
                                         <>

@@ -11,7 +11,7 @@ def send_registration_email(first_name, email, link_inscription):
         email (str): The email address of the applicant.
         link_inscription (str): The registration link for the applicant.
     """
-    subject = "Complete Your Registration"
+    subject = "Votre inscription sur TrouveTonalternance.com - Aureis"
     message = (
         f"Cher {first_name},\n\n"
         f"Veuillez compléter votre inscription en cliquant sur le lien ci-dessous:\n"

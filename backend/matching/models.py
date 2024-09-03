@@ -255,6 +255,7 @@ def get_applicant_resume_path(instance, filename):
 
 class Applicant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    formation = models.ForeignKey(Formation, on_delete=models.CASCADE, null=True)
     resume = models.FileField(
         upload_to=get_applicant_resume_path, verbose_name="CV", blank=True, null=True
     )

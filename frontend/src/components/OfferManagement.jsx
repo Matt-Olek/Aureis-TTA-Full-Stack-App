@@ -23,10 +23,23 @@ const OfferManagement = () => {
   const [durationFilter, setDurationFilter] = useState('');
   const [contractTypeFilter, setContractTypeFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [formationFilter, setFormationFilter] = useState('');
+  const [formations, setFormations] = useState([]);
+  
+  useEffect(() => {
+    Axios.get('/formations/')
+      .then(response => {
+        setFormations(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the formations!', error);
+      });
+  }, []);
   
   useEffect(() => {
     Axios.get('/match_applicants/', {
       params: {
+        formation : formationFilter,
         offer: offerFilter,
         company: companyFilter,
         status: statusFilter,
@@ -49,7 +62,12 @@ const OfferManagement = () => {
     .catch(error => {
       console.error('There was an error fetching the matches!', error);
     });
-  }, [offerFilter,companyFilter, statusFilter, firstNameFilter, lastNameFilter, cityFilter, countryFilter, phoneFilter, diplomaFilter, targetEducationalLevelFilter, durationFilter, contractTypeFilter, locationFilter]);
+    Axios.get('/formations/')
+    .then(response => {
+      setFormations(response.data);
+    })
+
+  }, [offerFilter,companyFilter, statusFilter, firstNameFilter, lastNameFilter, cityFilter, countryFilter, phoneFilter, diplomaFilter, targetEducationalLevelFilter, durationFilter, contractTypeFilter, locationFilter,formationFilter]);
 
   // Function to calculate statistics
   const calculateStatistics = () => {
@@ -116,6 +134,19 @@ const OfferManagement = () => {
          <div className="w-1/4 h-full bg-stone-800 text-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-bold mb-4">Filtres</h3>
 
+          <h1 className="text-xl font-bold mb-4">Filtrer par formation</h1>
+          <select
+            id="formationFilter"
+            value={formationFilter}
+            onChange={(e) => setFormationFilter(e.target.value)}
+            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+          >
+            <option value="">Toutes les formations</option>
+            {formations.map((formation, index) => (
+              <option key={index} value={formation.id}>{formation.name}</option>
+            ))}
+
+          </select>
           <h1 className="text-xl font-bold mb-4">Filtres de Besoin</h1>
 
           <label htmlFor="offerFilter" className="block mb-2">Filtrer par Besoin</label>
