@@ -1,0 +1,116 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+    background-image: none !important;
+  }
+</style>
+<div class="overflow-x-auto">
+    <table class="table table-zebra manrope w-full">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th>Prénom</th>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Diplôme</th>
+          <th>Type de contrat</th>
+          <th>Emplacement</th>
+          <th>Statut</th>
+          <th><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+          </svg>
+          </th>          
+        </tr>
+      </thead>
+      <tbody>
+        {% for applicant in applicants %}
+        <tr>
+          <td>{{ applicant.first_name }}</td>
+          <td>{{ applicant.last_name }}</td>
+          <td>{{ applicant.email }}</td>
+          <td>{{ applicant.phone }}</td>
+          <td>{{ applicant.diploma }}</td>
+          <td>{{ applicant.contract_type }}</td>
+          <td>{{ applicant.location }}</td>
+          <td>En cours de matching</td>
+          <td><div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn m-1 btn-ghost  ">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+              </svg>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <li><a>Infos</a></li>
+              <li><a>Supprimer</a></li>
+            </ul>
+          </div>
+        </td>
+        </tr>
+        {% endfor %}
+        {% for temp_applicant in temp_applicants %}
+        <tr>
+          <td>{{ temp_applicant.first_name }}</td>
+          <td>{{ temp_applicant.last_name }}</td>
+          <td>{{ temp_applicant.email }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>En attente d'inscription ({{ temp_applicant.date_created }})</td>
+          <td>
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn m-1 btn-ghost  ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                </svg>
+              </div>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li><a>Supprimer</a></li>
+                <li><a>Relancer</a></li>
+                <li><a onclick="navigator.clipboard.writeText('{{ temp_applicant.link_inscription }}')">Copier le lien</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <form method="post">
+            {% csrf_token %}
+              <td>
+              <input type="text" class="manrope form-control w-full p-2 rounded text-gray-100" id="first_name" name="first_name" placeholder="First Name" >
+            </td>
+            <td>
+              <input type="text" class="manrope form-control w-full p-2 rounded text-gray-100" id="last_name" name="last_name" placeholder="Last Name" >
+            </td>
+            <td>
+              <input type="email" class="manrope form-control w-full p-2 rounded text-gray-100" id="email" name="email" placeholder="Email" required>
+            </td>
+            <td>
+              <button type="submit" class="w-full bg-pink-300 hover:bg-pink-400 text-stone-900 py-2 px-4 rounded transition duration-300 ease-in-out">Contacter</button>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </form>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- {% if messages %}
+  <div class="mt-4">
+      {% for message in messages %}
+      <p class="text-red-500 text-sm">{{ message }}</p>
+      {% endfor %}
+  </div>
+  {% endif %} -->
+{% endblock %}

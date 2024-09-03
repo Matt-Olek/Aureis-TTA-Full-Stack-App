@@ -1,0 +1,35 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+{% block content %}
+<div class="w-screen h-screen flex items-center justify-center filter">
+    <div class="lg:w-1/2 bg-stone-900 flex flex-col items-center justify-center lg:rounded-3xl w-full h-full p-4 lg:h-auto lg:p-8 shadow-lg">
+        <div class="anton mt-4 p-5 w-full">
+            <img src="{% static 'media/images/icon-man.svg' %}" class="mx-auto mb-4 h-16" alt="Icon">
+            <h1 class="text-xl text-center text-white mb-4">Add Applicant</h1>
+            <form method="post" class="w-full">
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label for="first_name" class="block text-white mb-1">First Name</label>
+                    <input type="text" class="manrope form-control w-full p-2 rounded text-gray-100" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="last_name" class="block text-white mb-1">Last Name</label>
+                    <input type="text" class="manrope form-control w-full p-2 rounded text-gray-100" id="last_name" name="last_name" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="email" class="block text-white mb-1">Email</label>
+                    <input type="email" class="manrope form-control w-full p-2 rounded text-gray-100" id="email" name="email" required>
+                </div>
+                <button type="submit" class="w-full bg-pink-300 hover:bg-pink-400 text-stone-900 py-2 px-4 rounded transition duration-300 ease-in-out">Submit</button>
+            </form>
+            {% if messages %}
+            <div class="mt-4">
+                {% for message in messages %}
+                <p class="text-red-500 text-sm">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

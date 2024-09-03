@@ -1,0 +1,197 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  height: 100%;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #24242400 !important;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* height: 100%; */
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+body {
+  background-image: url(../media/images/background2.svg);
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100%;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Nunito Sans";
+  font-style: normal;
+  font-weight: bold;
+  src: local("Nunito Sans"),
+    local("NunitoSans-VariableFont_YTLC,opsz,wdth,wght"),
+    url("../fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf")
+      format("truetype");
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  font-style: normal;
+  font-weight: bold;
+  src: local("Bebas Neue"),
+    local("BebasNeue-Regular"),
+    url("../fonts/Bebas_Neue/BebasNeue-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Anton";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Anton"),
+    local("Anton-Regular"),
+    url("../fonts/Anton/Anton-Regular.ttf") format("truetype");
+  src: url("../fonts/Anton/Anton-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: bolder;
+  src: url("../fonts/Manrope/Manrope-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Lily Script One";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/LilyScriptOne/LilyScriptOne-Regular.ttf") format("truetype");
+}
+
+  /* FONTS */
+  
+  .bebas {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: bold;
+  }
+  
+  .nunito_light {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: lighter;
+    font-size: 1.2rem;
+    background-color: #ffffff;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nunito {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: bold;
+  }
+  
+  .anton {
+    font-family: "Anton", sans-serif;
+    font-weight: lighter;
+  }
+  
+  .manrope {
+    font-family: "Manrope", sans-serif;
+    font-weight:bold;
+  }
+  
+  .lily {
+    font-family: "Lily Script One", sans-serif;
+    font-weight: lighter;
+  }
+  
+  /* Colors */
+
+  .pink {
+    color: var(--pink);
+  }
+  
+  .green {
+    color: var(--green);
+  }
+  
+  .black {
+    color: var(--black);
+  }
+  
+  .blacker {
+    color: var(--blacker);
+  }
+  
+  .white {
+    color: var(--white);
+  }
+  
+  .red {
+    color: var(--red);
+  }
+  
+  .blue {
+    color: var(--blue);
+  }
+  
+  .grey {
+    color: var(--grey);
+  }
+  
+  .light_grey {
+    color: var(--light-grey);
+  }

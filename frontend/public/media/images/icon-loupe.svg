@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="85.251" height="110.061" viewBox="0 0 85.251 110.061">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2733" data-name="Rectangle 2733" width="63.402" height="62.428" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="Groupe_5437" data-name="Groupe 5437" transform="translate(-1202 -2050.946)">
+    <g id="Groupe_5420" data-name="Groupe 5420" transform="translate(1275.154 2050.946) rotate(79)">
+      <g id="Groupe_5410" data-name="Groupe 5410" transform="translate(0 0)" clip-path="url(#clip-path)">
+        <path id="Tracé_1932" data-name="Tracé 1932" d="M6.039,6.042a2.131,2.131,0,0,0,0,2.964l7.269,7.269c.344.341.685.685,1.028,1.028A2.1,2.1,0,0,0,17.3,14.339L10.031,7.07C9.687,6.726,9.344,6.385,9,6.042a2.118,2.118,0,0,0-2.964,0" transform="translate(7.018 7.014)" fill="#fff"/>
+        <path id="Tracé_1933" data-name="Tracé 1933" d="M22.738,13.83V2.1a2.1,2.1,0,0,0-4.191,0V13.83a2.1,2.1,0,1,0,4.191,0" transform="translate(23.929 -0.001)" fill="#fff"/>
+        <path id="Tracé_1934" data-name="Tracé 1934" d="M12.378,22.738H13.83a2.1,2.1,0,1,0,0-4.191H2.1a2.1,2.1,0,0,0,0,4.191Z" transform="translate(0 23.928)" fill="#fff"/>
+        <path id="Tracé_1935" data-name="Tracé 1935" d="M12.981,1.48A2.132,2.132,0,0,0,11.813,4.2q1.907,4.772,3.815,9.545c.179.451.36.9.538,1.351a2.1,2.1,0,1,0,3.891-1.555L16.245,4c-.181-.449-.36-.9-.54-1.349A2.116,2.116,0,0,0,12.981,1.48" transform="translate(15.051 1.704)" fill="#fff"/>
+        <path id="Tracé_1938" data-name="Tracé 1938" d="M5.749,11.974c-.447-.19-.891-.382-1.337-.573a2.117,2.117,0,0,0-2.751,1.1,2.131,2.131,0,0,0,1.1,2.751L12.207,19.3c.447.19.891.382,1.337.573A2.1,2.1,0,0,0,15.2,16.025Q10.472,14,5.749,11.974" transform="translate(1.951 14.502)" fill="#fff"/>
+      </g>
+    </g>
+    <g id="Groupe_5419" data-name="Groupe 5419" transform="translate(6 -44.049)">
+      <g id="Unknown" transform="translate(1205.121 2135.45)">
+        <ellipse id="Ellipse_1" data-name="Ellipse 1" cx="17.393" cy="19.111" rx="17.393" ry="19.111" transform="translate(3.794 7.433)" fill="#fefbfa"/>
+        <path id="Tracé_47" data-name="Tracé 47" d="M93.272,181.717q.181,0,.354-.008a10.18,10.18,0,0,0,7.877-4.7.788.788,0,0,0-1.364-.79,8.624,8.624,0,0,1-6.581,3.917c-2.668.114-5.159-1.368-7.2-4.287a.788.788,0,1,0-1.291.9C87.9,180.806,91.033,181.717,93.272,181.717Z" transform="translate(-72.507 -143.175)" fill="#f2bdec"/>
+        <ellipse id="Ellipse_2" data-name="Ellipse 2" cx="17.393" cy="19.111" rx="17.393" ry="19.111" transform="translate(3.794 7.433)" fill="#fefbfa"/>
+        <path id="Tracé_48" data-name="Tracé 48" d="M93.272,181.717q.181,0,.354-.008a10.18,10.18,0,0,0,7.877-4.7.788.788,0,0,0-1.364-.79,8.624,8.624,0,0,1-6.581,3.917c-2.668.114-5.159-1.368-7.2-4.287a.788.788,0,1,0-1.291.9C87.9,180.806,91.033,181.717,93.272,181.717Z" transform="translate(-72.507 -143.175)" fill="#f2bdec"/>
+        <ellipse id="Ellipse_3" data-name="Ellipse 3" cx="17.393" cy="19.111" rx="17.393" ry="19.111" transform="translate(3.794 7.433)" fill="#99ffb1"/>
+        <path id="Tracé_49" data-name="Tracé 49" d="M93.272,181.717q.181,0,.354-.008a10.18,10.18,0,0,0,7.877-4.7.788.788,0,0,0-1.364-.79,8.624,8.624,0,0,1-6.581,3.917c-2.668.114-5.159-1.368-7.2-4.287a.788.788,0,1,0-1.291.9C87.9,180.806,91.033,181.717,93.272,181.717Z" transform="translate(-72.507 -143.175)" fill="#231f20"/>
+        <path id="Tracé_50" data-name="Tracé 50" d="M34.707,36.2c4.366,1.066,4.44,3.674,4.079,5.053-.752,1.352-.262,1,0,0A55.5,55.5,0,0,1,42.88,35.3C55.5,18.657,28.886,9.784,22.075,10.383c-8.991,0-28.488,6.951-18.836,19.529,4.3,5.6,9.414,1.026,14.91.141a27.169,27.169,0,0,0,3.27-.643C26.023,28.075,38.748,25.246,34.707,36.2Z" transform="translate(-0.622 -10.355)" fill="#71d588"/>
+      </g>
+      <g id="Ellipse_5" data-name="Ellipse 5" transform="translate(1196 2126)" fill="none" stroke="#fff" stroke-width="3">
+        <circle cx="32" cy="32" r="32" stroke="none"/>
+        <circle cx="32" cy="32" r="30.5" fill="none"/>
+      </g>
+      <line id="Ligne_4" data-name="Ligne 4" x2="20.431" y2="20.431" transform="translate(1251.09 2181.09)" fill="none" stroke="#fff" stroke-width="10"/>
+    </g>
+  </g>
+</svg>

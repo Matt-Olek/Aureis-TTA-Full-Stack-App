@@ -1,0 +1,115 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  body {
+    font-family: 'Nunito', sans-serif;
+    background-image: none !important;
+  }
+</style>
+<div>
+    <table class="table table-zebra manrope">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th>Nom de l'entreprise</th>
+          <th>Mail</th>
+          <th>Secteur d'activité</th>
+          <th>Code APE</th>
+          <th>Adresse</th>
+          <th>Ville</th>
+          <th>Code postal</th>
+          <th>Pays</th>
+          <th>Statut</th>
+          <th>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+            </svg>
+          </th> 
+        </tr>
+      </thead>
+      <tbody>
+        {% for company in companies %}
+        <tr>
+            <td>{{ company.name }}</td>
+            <td>{{ company.get_contacts }}</td>
+            <td>{% for sector in company.sector.all %}{{ sector.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+            <td>{{ company.codeAPE.code }}</td>
+            <td>{{ company.adress }}</td>
+            <td>{{ company.city }}</td>
+            <td>{{ company.zip_code }}</td>
+            <td>{{ company.country }}</td>
+            <td>En cours de matching</td>
+            <td>
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn m-1 btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                </svg>
+              </div>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li><a href="{% url 'company_info' company.id %}">Infos</a></li>
+                <li><a href="{% url 'delete_company' company.id %}">Supprimer</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+        {% for temp_company in temp_companies %}
+        <tr>
+            <td>{{ temp_company.name }}</td>
+            <td>{{ temp_company.email }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>En attente d'inscription ({{ temp_company.date_created }})</td>
+            <td>
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn m-1 btn-ghost  ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                    </svg>
+                  </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                        <li><a href="">Supprimer</a></li>
+                        <li><a href="">Relancer</a>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <form method="post" href="{% url 'add_company' %}">
+            {% csrf_token %}
+            <td>
+              <input type="text" class="manrope form-control w-full p-2 rounded text-gray-100" id="name" name="name" placeholder="Nom de l'entreprise" required>
+            </td>
+            <td>
+              <input type="email" class="manrope form-control w-full p-2 rounded text-gray-100" id="email" name="email" placeholder="Mail" required>
+            </td>   
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <button type="submit" class="w-full bg-pink-300 hover:bg-pink-400 text-stone-900 py-2 px-4 rounded transition duration-300 ease-in-out">Ajouter</button>
+            </td>
+          </form>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {% if messages %}
+  <div class="mt-4">
+      {% for message in messages %}
+      <p class="text-red-500 text-sm">{{ message }}</p>
+      {% endfor %}
+  </div>
+  {% endif %}
+{% endblock %}

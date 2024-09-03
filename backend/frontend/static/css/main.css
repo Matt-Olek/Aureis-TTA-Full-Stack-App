@@ -1,0 +1,821 @@
+body {
+    background-color: #231F20;
+    background-image: url(../media/images/background2.svg);
+    background-attachment: fixed;
+    position: fixed;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+@font-face {
+    font-family: "Nunito Sans";
+    font-style: normal;
+    font-weight: bold;
+    src: local("Nunito Sans"),
+      local("NunitoSans-VariableFont_YTLC,opsz,wdth,wght"),
+      url("../fonts/Nunito_Sans/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf")
+        format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Bebas Neue";
+    font-style: normal;
+    font-weight: bold;
+    src: local("Bebas Neue"),
+      local("BebasNeue-Regular"),
+      url("../fonts/Bebas_Neue/BebasNeue-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Anton";
+    font-style: normal;
+    font-weight: normal;
+    src: local("Anton"),
+      local("Anton-Regular"),
+      url("../fonts/Anton/Anton-Regular.ttf") format("truetype");
+    src: url("../fonts/Anton/Anton-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Manrope";
+    font-style: normal;
+    font-weight: bolder;
+    src: url("../fonts/Manrope/Manrope-VariableFont_wght.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Lily Script One";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/LilyScriptOne/LilyScriptOne-Regular.ttf") format("truetype");
+  }
+  
+  /* COLORS */
+  
+  :root {
+    --black: #221d20;
+    --blacker: #000000;
+    --white:#fffefe;
+    --pink: #fe98e5;
+    --green: #98ffb0;
+    --red: #AC3931;
+    --blue: #006C67;
+    --grey: #7a7a7a;
+    --light-grey: #EFF0F2;
+  }
+  
+  .dark_bg {
+    background-color: var(--black);
+  }
+  
+  .blacker_bg {
+    background-color: var(--blacker);
+  }
+  
+  .light_bg {
+    background-color: var(--white);
+  }
+  
+  .pink_bg {
+    background-color: var(--pink);
+  }
+  
+  .green_bg {
+    background-color: var(--green);
+  }
+  
+  .red_bg {
+    background-color: var(--red);
+  }
+  
+  .blue_bg {
+    background-color: var(--blue);
+  }
+  
+  .light_grey_bg {
+    background-color: var(--light-grey);
+  }
+  .pink {
+    color: var(--pink);
+  }
+  
+  .green {
+    color: var(--green);
+  }
+  
+  .black {
+    color: var(--black);
+  }
+  
+  .blacker {
+    color: var(--blacker);
+  }
+  
+  .white {
+    color: var(--white);
+  }
+  
+  .red {
+    color: var(--red);
+  }
+  
+  .blue {
+    color: var(--blue);
+  }
+  
+  .grey {
+    color: var(--grey);
+  }
+  
+  .light_grey {
+    color: var(--light-grey);
+  }
+  
+  /* FONTS */
+  
+  .bebas {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: bold;
+  }
+  
+  .nunito_light {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: lighter;
+    font-size: 1.2rem;
+    background-color: #ffffff;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nunito {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: bold;
+  }
+  
+  .anton {
+    font-family: "Anton", sans-serif;
+    font-weight: lighter;
+  }
+  
+  .manrope {
+    font-family: "Manrope", sans-serif;
+    font-weight:bold;
+  }
+  
+  .lily {
+    font-family: "Lily Script One", sans-serif;
+    font-weight: lighter;
+  }
+  
+  
+  
+  /*         CUSTOM BUTTONS         */
+  
+    /* Custom Pink Button */
+    .btn-pink {
+      background-color: var(--pink);
+      color: var(--black);
+    }
+  
+    .btn-pink:hover {
+      background-color: var(--black);
+      color: var(--pink);
+    }
+  
+  
+    /* Custom Green Button */
+    .btn-green {
+      background-color: var(--green);
+      color: var(--black);
+    }
+  
+    .btn-green:hover {
+      background-color: var(--black);
+      color: var(--green);
+    }
+  
+  
+    /* Custom White Button */
+    .btn-white {
+      background-color: var(--white);
+      color: var(--black);
+    }
+  
+    .btn-white:hover {
+      background-color: var(--black);
+      color: var(--white);
+    }
+  
+  
+    /* Custom Black Button */
+    .btn-black {
+      background-color: var(--black);
+      color: var(--white);
+    }
+  
+    .btn-black:hover {
+      background-color: var(--white);
+      color: var(--black);
+    }
+  
+    .btn-red {
+      background-color: var(--red);
+      color: var(--white);
+    }
+  
+    .btn-red:hover {
+      background-color: var(--white);
+      color: var(--red);
+    }
+  
+    .btn-blue {
+      background-color: var(--blue);
+      color: var(--white);
+    }
+  
+    .btn-blue:hover {
+      background-color: var(--white);
+      color: var(--blue);
+    }
+  
+  
+    .btn-outline-red {
+      background-color: transparent;
+      color: var(--red);
+      border: 2px solid var(--red);
+    }
+  
+    .btn-outline-red:hover {
+      background-color: var(--red);
+      color: var(--white);
+    }
+  
+    .btn-outline-pink {
+      background-color: transparent;
+      color: var(--pink);
+      border: 2px solid var(--pink);
+    }
+  
+    .btn-outline-pink:hover {
+      background-color: var(--pink);
+      color: var(--white);
+    }
+  
+    .btn-outline-green {
+      background-color: transparent;
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+  
+    .btn-outline-green:hover {
+      background-color: var(--green);
+      color: var(--white);
+    }
+  
+    .btn-outline-blue {
+      background-color: transparent;
+      color: var(--blue);
+      border: 2px solid var(--blue);
+    }
+  
+    .btn-outline-blue:hover {
+      background-color: var(--blue);
+      color: var(--white);
+    }
+  
+    .btn-outline-black {
+      background-color: transparent;
+      color: var(--black);
+      border: 2px solid var(--black);
+    }
+  
+    .btn-outline-black:hover {
+      background-color: var(--black);
+      color: var(--white);
+    }
+  
+    .btn-outline-white {
+      background-color: transparent;
+      color: var(--white);
+      border: 2px solid var(--white);
+    }
+  
+    .btn-outline-white:hover {
+      background-color: var(--white);
+      color: var(--black);
+    }
+  
+  
+    .btn {
+      font-family: "Manrope", sans-serif;
+      font-weight: 1000;
+    }
+  
+    .btn-big {
+      padding: 20px;
+      font-size: 1rem;
+      border-radius: 30px;
+    }
+   
+  
+  
+  /*  */
+  
+  .bigTitle {
+    font-size: 5vw;
+    font-weight: bolder;
+    text-shadow: 4px 4px 40px #000000;
+    color: #ffffff;
+    margin: 0;
+    margin-left: 2%;
+    padding: 0;
+    opacity: 0; /* Set initial opacity to 0 */
+    animation: fadeIn 1s ease-in-out forwards; /* Apply fade-in animation */
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      scale: 0.95;
+      opacity: 0; /* Start with opacity 0 */
+    }
+    100% {
+      scale: 1;
+      opacity: 1; /* End with opacity 1 */
+    }
+  }
+  
+  .subTitle {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-shadow: 1px 2px 4px #000000;
+    border: #000000;
+    border-width: 2px;
+    color: #ffffff;
+    margin: 0;
+    margin-left: 2%;
+    padding: 0;
+  }
+  
+  .navBarItems {
+    color: #ffffff;
+  }
+  .navBarItems:hover {
+    color: #945aea;
+    transition: 0.1s;
+  }
+  
+  .background-image {
+    background-color: #231F20;
+    background-image: url(../media/images/left_bg.png);
+    background-attachment: scroll;
+    position: absolute;
+    background-size:cover;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+    animation: arrive_left 2s ease-in-out;
+  }
+  
+  .background-image2 {
+    background-color: #231F20;
+    background-image: url(../media/images/right_bg.png);
+    background-attachment:scroll;
+    position: absolute;
+    background-size:cover;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+    animation: arrive_right 2s ease-in-out;
+  }
+  
+  .background-image3 {
+    background-color: #231F20;
+    background-image: url(../media/images/background2.svg);
+    background-attachment: fixed;
+    position: fixed;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  .background-image4 {
+    background-color: #231F20;
+    background-image: url(../media/images/background2.svg);
+    mix-blend-mode: luminosity;
+    opacity: 1;
+    background-attachment: fixed;
+    position: fixed;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    z-index: -1;
+    overflow: hidden;
+    filter: brightness(50%) grayscale(10%);
+  
+  }
+  
+  .badge {
+    font-family: "Manrope", sans-serif;
+    font-weight:bold;
+  }
+  
+  @keyframes arrive_right {
+    0% {
+      transform: translateX(50%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes arrive_left {
+    0% {
+      transform: translateX(-50%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+  
+  .bg_index_left {
+    background-color: #231F20;
+    background-image: url(../media/images/left_bg.png);
+    background-attachment:scroll;
+    background-size:50%;
+    position: absolute;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  /* Overlay Styles */
+  #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    z-index: 9998;
+  }
+  
+  .overlay-hidden #overlay {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .scale-up-hover {
+    transform: scale(1);
+    transition: 0.1s;
+  }
+  
+  .scale-up-hover:hover {
+    transform: scale(1.1);
+    transition: 0.1s;
+  }
+  
+  .scale-up-hover-img {
+    img {
+      transform: scale(1);
+      transition: 0.1s;
+    }
+  }
+  
+  .scale-up-hover-img:hover {
+    img {
+      transform: scale(1.2);
+      transition: 0.1s;
+    }
+  }
+  .scale-up-hover-sm {
+    transform: scale(1);
+    transition: 0.1s;
+  }
+  
+  .scale-up-hover-sm:hover {
+    transform: scale(1.05);
+    transition: 0.1s;
+  }
+  
+  .text-shadow {
+    text-shadow: 1px 1px 10px #000000;
+  }
+  
+  /* Letter CSS */
+  
+  .letter-image {
+    position: relative;
+    top: 10%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+  
+  .animated-mail {
+    position: absolute;
+    height: 150px;
+    width: 200px;
+    -webkit-transition: 0.4s;
+    -moz-transition: 0.4s;
+    transition: 0.4s;
+  
+    .body {
+      position: absolute;
+      bottom: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 0 100px 200px;
+      border-color: transparent transparent  var(--pink) transparent;
+      z-index: 2;
+    }
+  
+    .top-fold {
+      position: absolute;
+      top: 50px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 50px 100px 0 100px;
+      -webkit-transform-origin: 50% 0%;
+      -webkit-transition: transform 0.4s 0.4s, z-index 0.2s 0.4s;
+      -moz-transform-origin: 50% 0%;
+      -moz-transition: transform 0.4s 0.4s, z-index 0.2s 0.4s;
+      transform-origin: 50% 0%;
+      transition: transform 0.4s 0.4s, z-index 0.2s 0.4s;
+      border-color: var(--white) transparent transparent transparent;
+      z-index: 2;
+    }
+  
+    .back-fold {
+      position: absolute;
+      bottom: 0;
+      width: 200px;
+      height: 100px;
+      background: var(--pink);
+      z-index: 0;
+    }
+  
+    .left-fold {
+      position: absolute;
+      bottom: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 50px 0 50px 100px;
+      border-color: transparent transparent transparent var(--pink);
+      z-index: 2;
+    }
+  
+    .letter {
+      left: 20px;
+      bottom: 0px;
+      position: absolute;
+      width: 160px;
+      height: 60px;
+      background: white;
+      z-index: 1;
+      overflow: hidden;
+      -webkit-transition: 0.4s 0.2s;
+      -moz-transition: 0.4s 0.2s;
+      transition: 0.4s 0.2s;
+  
+      .letter-border {
+        height: 10px;
+        width: 100%;
+        background: repeating-linear-gradient(
+          -45deg,
+          var(--green),
+          var(--green) 2px,
+          transparent 8px,
+          transparent 18px
+        );
+      }
+  
+      .letter-title {
+        margin-top: 10px;
+        margin-left: 5px;
+        height: 10px;
+        width: 40%;
+        background: var(--green)
+      }
+      .letter-context {
+        margin-top: 10px;
+        margin-left: 5px;
+        height: 10px;
+        width: 20%;
+        background: var(--green)
+      }
+  
+      .letter-stamp {
+        margin-top: 30px;
+        margin-left: 120px;
+        border-radius: 100%;
+        height: 30px;
+        width: 30px;
+        background: var(--green);
+        opacity: 0.3;
+      }
+    }
+  }
+  
+  .letter-image:hover {
+    .animated-mail {
+      transform: translateY(50px);
+      -webkit-transform: translateY(50px);
+      -moz-transform: translateY(50px);
+    }
+  
+    .animated-mail .top-fold {
+      transition: transform 0.4s, z-index 0.2s;
+      transform: rotateX(180deg);
+      -webkit-transition: transform 0.4s, z-index 0.2s;
+      -webkit-transform: rotateX(180deg);
+      -moz-transition: transform 0.4s, z-index 0.2s;
+      -moz-transform: rotateX(180deg);
+      z-index: 0;
+    }
+  
+    .animated-mail .letter {
+      height: 180px;
+    }
+  
+    .shadow {
+      width: 250px;
+    }
+  }
+  
+  
+  /* Toasts  */
+  
+  @keyframes fadeInAndOut {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    10% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    90% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+  
+  .toast {
+    animation: fadeInAndOut 3s ease-in-out forwards;
+    position: fixed;
+    bottom: 15%;
+    right: 1rem;
+    z-index: 1050;
+  }
+  
+  
+  /* Crispy Forms CSS */
+  
+  .asteriskField {
+    display: none;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .form-text { 
+    margin-top: 2px;
+    font-size: 0.7rem;
+    color: var(--grey) !important;
+  }
+  
+  input[type="text"] {
+    font-family: Anton;
+    font-size: 1.2rem;
+    font-weight: lighter;
+  }
+  
+  
+  /* Progress circle */
+  
+  .progress-circle {
+    display: flex;
+    padding: 0px !important;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(var(--green) var(--progress), rgba(128, 128, 128, 0) 0deg);
+    font-size: 0;
+  }
+  
+  .progress-circle::after {
+    content: attr(data-progress) '%';
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 10px;
+    border-radius: 50%;
+    background: var(--black);
+    color: white; /* added to make text white */
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  
+  
+  /*      FX       */
+  
+  @keyframes pulsate {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+  }
+  
+  @keyframes pulsate-red-text {
+    0% {
+      filter : drop-shadow(0 0 0 var(--red))
+    }
+    40% {
+      filter : drop-shadow(0 0 0 var(--red))
+    }
+    50% {
+      filter : drop-shadow(0 0 25px var(--red))
+    }
+    60% {
+      filter : drop-shadow(0 0 0 var(--red))
+    }
+    100% {
+      filter : drop-shadow(0 0 0 var(--red))
+    }
+  }
+  .glow {
+    animation: pulsate 2s infinite;
+  }
+  
+  .glow-hover {
+    .card {
+    animation: none;
+    
+    }
+  }
+  
+  .glow-hover:hover {
+    .card {
+    animation: pulsate 2s infinite;
+    }
+  }
+  
+  .glow-red {
+    animation: pulsate-red-text 5s infinite;
+  }
+  
+  .ellipsis {
+    text-overflow:clip;
+  
+    /* Required for text-overflow to do anything */
+    overflow: hidden;
+  }
+  
+  .crop {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .dropdown-toggle::after {
+    display: none;
+  }
+  
+  a {
+    white-space: nowrap; 
+    font-size: auto;
+  
+  }
+  
+  

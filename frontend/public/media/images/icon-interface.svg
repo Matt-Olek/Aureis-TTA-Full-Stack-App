@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="61.279" height="59.466" viewBox="0 0 61.279 59.466">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_22" data-name="Rectangle 22" width="61.279" height="27.157" fill="#fe99e5"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_22-2" data-name="Rectangle 22" width="61.279" height="27.157" transform="translate(0 0)" fill="#99ffb1"/>
+    </clipPath>
+  </defs>
+  <g id="Groupe_22" data-name="Groupe 22" transform="translate(-420 -2135.041)">
+    <g id="Groupe_20" data-name="Groupe 20" transform="translate(420 2167.35)">
+      <g id="Groupe_19" data-name="Groupe 19" transform="translate(0 0)" clip-path="url(#clip-path)">
+        <path id="Tracé_91" data-name="Tracé 91" d="M47.791,26.836H13.668A13.168,13.168,0,0,1,13.668.5H47.791a13.168,13.168,0,0,1,0,26.336" transform="translate(-0.09 -0.089)" fill="#fe99e5"/>
+        <path id="Tracé_92" data-name="Tracé 92" d="M47.791,26.836H13.668A13.168,13.168,0,0,1,13.668.5H47.791a13.168,13.168,0,0,1,0,26.336Z" transform="translate(-0.09 -0.089)" fill="#fe99e5"/>
+        <path id="Tracé_93" data-name="Tracé 93" d="M25.21,13.987a11.7,11.7,0,1,0-11.7,11.705,11.705,11.705,0,0,0,11.7-11.705" transform="translate(-0.323 -0.409)" fill="#fe99e5"/>
+        <path id="Tracé_94" data-name="Tracé 94" d="M25.21,13.987a11.7,11.7,0,1,0-11.7,11.705A11.705,11.705,0,0,0,25.21,13.987Z" transform="translate(-0.323 -0.409)" fill="#231f20"/>
+      </g>
+    </g>
+    <g id="Groupe_21" data-name="Groupe 21" transform="translate(481.279 2162.197) rotate(180)">
+      <g id="Groupe_19-2" data-name="Groupe 19" transform="translate(0 0)" clip-path="url(#clip-path-2)">
+        <path id="Tracé_91-2" data-name="Tracé 91" d="M47.291,26.336H13.168A13.168,13.168,0,0,1,13.168,0H47.291a13.168,13.168,0,0,1,0,26.336" transform="translate(0.41 0.411)" fill="#99ffb1"/>
+        <path id="Tracé_92-2" data-name="Tracé 92" d="M47.291,26.336H13.168A13.168,13.168,0,0,1,13.168,0H47.291a13.168,13.168,0,0,1,0,26.336Z" transform="translate(0.41 0.411)" fill="#99ffb1"/>
+        <path id="Tracé_93-2" data-name="Tracé 93" d="M23.409,11.705a11.7,11.7,0,1,0-11.7,11.705,11.705,11.705,0,0,0,11.7-11.705" transform="translate(1.478 1.873)" fill="#99ffb1"/>
+        <path id="Tracé_94-2" data-name="Tracé 94" d="M23.409,11.705a11.7,11.7,0,1,0-11.7,11.705A11.705,11.705,0,0,0,23.409,11.705Z" transform="translate(1.478 1.873)"/>
+      </g>
+    </g>
+  </g>
+</svg>

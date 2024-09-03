@@ -1,0 +1,66 @@
+{% extends "frontend/base.html" %}
+
+{% block content %}
+  <div class="w-screen h-screen flex items-center justify-center">
+    <div class="lg:w-1/2 bg-stone-900 items-center justify-center lg:rounded-3xl w-full h-full p-4 lg:h-auto lg:p-8">
+      <div class="anton mt-4 p-5" style="line-height: 1.2; width: 100%; font-size: min(50px,max(20px, 3vw));">
+        <p id="line1" class="m-0 green"></p>
+        <p id="line2" class="m-0"></p>
+        <p id="line3" class="m-0 pink"></p>
+      </div>
+      <div class="container mt-5 p-4 pt-0">
+        <div class="flex flex-col space-y-4">
+          <div class="flex flex-col">
+            <a href="{% url 'login' %}" class="bg-pink-300 hover:bg-pink-400 text-stone-900 font-bold py-2 px-4 rounded manrope text-center">Trouver un alternant</a>
+          </div>
+          <div class="flex flex-col">
+            <a href="{% url 'login' %}" class="bg-green-300 hover:bg-green-400 text-stone-900 font-bold py-2 px-4 rounded manrope text-center">Trouver mon alternance</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var lines1 = [
+        "La plateforme de matching",
+        "qui matche les alternants",
+        "et les entreprises en un clic !"
+    ];
+    var lines2 = [
+        "La plateforme de matching",
+        "qui connecte les alternants",
+        "et les entreprises en un clic !"
+    ];
+
+    random_lines = Math.random() < 0.5 ? lines1 : lines2;
+    var lines = random_lines;
+
+    // Adjust speeds (milliseconds per character) for each line
+    var speeds = [25, 35, 30, 40, 20];
+
+    var currentLine = 0;
+    var currentChar = 0;
+
+    function typeWriter() {
+        if (currentLine < lines.length) {
+            var lineElement = document.getElementById("line" + (currentLine + 1));
+            var speed = speeds[currentLine]; // Get speed for current line
+            if (currentChar < lines[currentLine].length) {
+                lineElement.innerHTML += lines[currentLine].charAt(currentChar);
+                currentChar++;
+                setTimeout(typeWriter, speed);
+            } else {
+                lineElement.innerHTML += "<br>";
+                currentLine++;
+                currentChar = 0;
+                setTimeout(typeWriter, speed);
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        typeWriter();
+    });
+  </script>
+{% endblock %}

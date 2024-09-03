@@ -1,0 +1,54 @@
+{% load static %}
+<div class="navbar bg-stone-900">
+    <div class="navbar-start">
+        <a href="{% url 'index' %}" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="{% static 'media/logos/logo.png' %}" alt="TTA" class="h-12 w-auto" />
+            <span class="text-lg text-green-300">AUREIS - TTA</span>
+        </a>
+    </div>
+    <div class="navbar-center">
+    </div>
+    <div class="navbar-end flex space-x-3 rtl:space-x-reverse">
+        {% if user.is_authenticated %}
+        {% if user.is_staff or user.is_superuser %}
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle">
+                <img src="{% static 'media/icons/icon-deroulant.svg' %}" alt="Dropdown Icon" class="h-100 w-100" />
+            </label>
+            <ul tabindex="0" class="menu menu-sm dropdown-content bg-stone-900 text-gray-100 rounded-box z-20 mt-2 w-48 p-2 shadow">
+                <li><a href="{% url 'applicant_management' %}" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Management Candidats</a></li>
+                <li><a href="{% url 'company_management' %}" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Management Entreprises</a></li>
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Admin 3</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle">
+                <img src="{% static 'media/icons/icon-deroulant.svg' %}" alt="Dropdown Icon" class="h-100 w-100" />
+            </label>
+            <ul tabindex="0" class="menu menu-sm dropdown-content bg-stone-900 text-gray-100 rounded-box z-20 mt-2 w-48 p-2 shadow">
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Action 1</a></li>
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Action 2</a></li>
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900">Action 3</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle">
+                <img src="{% static 'media/icons/icon-profile.svg' %}" alt="Dropdown Icon" class="h-100 w-100 mx-2" />
+            </label>
+            <ul tabindex="0" class="menu menu-sm dropdown-content bg-stone-900 text-gray-100 rounded-box z-20 mt-2 w-48 p-2 shadow">
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100">Profile</a></li>
+                <li><a href="#" class="text-sm text-gray-100 hover:bg-gray-100">Settings</a></li>
+                <li><a href="{% url 'logout' %}" class="text-sm text-gray-100 hover:bg-gray-100">Logout</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-ghost btn-circle text-dark text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-12 green hover:text-green-400">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+            </svg>
+        </a>
+        {% endif %}
+    </div>
+</div>
