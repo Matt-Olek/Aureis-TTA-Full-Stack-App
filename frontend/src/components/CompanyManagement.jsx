@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
 import Axios from '../utils/Axios';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
 import { useFlyingMessage } from '../App';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
@@ -19,61 +15,6 @@ const CompanyManagement = () => {
     const [newCompany, setNewCompany] = useState({ name: '', email: '' });
     const [messages, setMessages] = useState([]);
     const showMessage = useFlyingMessage();
-
-    const [columnDefs] = useState([
-        { headerName: "Nom de l'entreprise", field: 'name', filter: true },
-        { headerName: 'Email', field: 'email', filter: true },
-        { headerName: 'Secteur', field: 'sector', filter: true },
-        { headerName: 'Code APE', field: 'codeAPE', filter: true },
-        { headerName: 'Adresse', field: 'address', filter: true },
-        { headerName: 'Ville', field: 'city', filter: true },
-        { headerName: 'Code postal', field: 'zip_code', filter: true },
-        { headerName: 'Pays', field: 'country', filter: true },
-        {
-            headerName: 'Statut', field: 'status', filter: true,
-            valueGetter: (params) => {
-                if (params.data.registrationLink) {
-                    return `En attente d'inscription (${new Date(params.data.date_created).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })})`;
-                }
-                return 'En cours de matching';
-            }
-        },
-        {
-            headerName: 'Actions', field: 'actions', filter: false, sortable: false,
-            cellRenderer: (params) => {
-                const { registrationLink, id } = params.data;
-                if (registrationLink) {
-                    return (
-                        <div className="dropdown dropdown-end">
-                            <div tabIndex="0" role="button" className="btn btn-ghost h-5 w-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                </svg>
-                            </div>
-                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-150 w-52 p-2 shadow">
-                                <li><a>Supprimer</a></li>
-                                <li><a>Relancer</a></li>
-                                <li><a onClick={() => navigator.clipboard.writeText(registrationLink)}>Copier le lien</a></li>
-                            </ul>
-                        </div>
-                    );
-                }
-                return (
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex="0" role="button">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                            </svg>
-                        </div>
-                        <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-150 w-52 p-2 shadow">
-                            <li><a href={`/company_info/${id}`}>Infos</a></li>
-                            <li><a href={`/delete_company/${id}`}>Supprimer</a></li>
-                        </ul>
-                    </div>
-                );
-            }
-        }
-    ]);
 
     const fetchCompanies = async () => {
         try {
@@ -192,19 +133,71 @@ const CompanyManagement = () => {
                     </svg>
                 </button>
             </h1>
-            <div className="flex">
-                <div className="ag-theme-material-dark w-full" style={{ height: 600 }}>
-                    <AgGridReact
-                        rowData={[...filteredCompanies, ...filteredTempCompanies]}
-                        columnDefs={columnDefs}
-                        domLayout={'autoHeight'}
-                        pagination={true}
-                        paginationPageSize={10}
-                        onFirstDataRendered={(params) => params.api.sizeColumnsToFit()}
-                        overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Loading...</span>'}
-                        overlayNoRowsTemplate={'<span class="ag-overlay-loading-center">No rows to show</span>'}
-                    />
-                </div>
+
+            <div className="">
+                <table className="table w-full">
+                    <thead>
+                        <tr>
+                            <th>Nom de l'entreprise</th>
+                            <th>Email</th>
+                            <th>Secteur</th>
+                            <th>Code APE</th>
+                            <th>Adresse</th>
+                            <th>Ville</th>
+                            <th>Code postal</th>
+                            <th>Pays</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {[...filteredCompanies, ...filteredTempCompanies].map((company, index) => (
+                            <tr key={index}>
+                                <td>{company.name}</td>
+                                <td>{company.email}</td>
+                                <td>{company.sector}</td>
+                                <td>{company.codeAPE}</td>
+                                <td>{company.address}</td>
+                                <td>{company.city}</td>
+                                <td>{company.zip_code}</td>
+                                <td>{company.country}</td>
+                                <td>
+                                    {company.registrationLink
+                                        ? `En attente d'inscription (${new Date(company.date_created).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })})`
+                                        : 'En cours de matching'}
+                                </td>
+                                <td>
+                                    {company.registrationLink ? (
+                                        <div className="dropdown dropdown-end">
+                                            <div tabIndex="0" role="button" className="btn btn-ghost h-5 w-5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                                </svg>
+                                            </div>
+                                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-150 w-52 p-2 shadow">
+                                                <li><a>Supprimer</a></li>
+                                                <li><a>Relancer</a></li>
+                                                <li><a onClick={() => navigator.clipboard.writeText(company.registrationLink)}>Copier le lien</a></li>
+                                            </ul>
+                                        </div>
+                                    ) : (
+                                        <div className="dropdown dropdown-end">
+                                            <div tabIndex="0" role="button">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                                </svg>
+                                            </div>
+                                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-150 w-52 p-2 shadow">
+                                                <li><a href={`/company_info/${company.id}`}>Infos</a></li>
+                                                <li><a href={`/delete_company/${company.id}`}>Supprimer</a></li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
             {/* Pie Chart Section */}

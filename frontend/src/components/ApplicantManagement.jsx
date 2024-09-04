@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
 import Axios from '../utils/Axios';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
 import { useFlyingMessage } from '../App';
 import * as XLSX from 'xlsx'; // Import XLSX library
 
@@ -11,63 +7,9 @@ const ApplicantManagement = () => {
     const [filteredApplicants, setFilteredApplicants] = useState([]);
     const [filteredTempApplicants, setFilteredTempApplicants] = useState([]);
     const [newApplicant, setNewApplicant] = useState({ first_name: '', last_name: '', email: '' });
+    const [nameFilter, setNameFilter] = useState(''); // State for filtering by name
+    const [statusFilter, setStatusFilter] = useState(''); // State for filtering by status
     const showMessage = useFlyingMessage();
-
-    const [columnDefs] = useState([
-        { headerName: 'Prénom', field: 'first_name', filter: true },
-        { headerName: 'Nom', field: 'last_name', filter: true },
-        { headerName: 'Email', field: 'email', filter: true },
-        { headerName: 'Téléphone', field: 'phone', filter: true },
-        { headerName: 'Diplôme', field: 'diploma', filter: true },
-        { headerName: 'Type de contrat', field: 'contract_type', filter: "agSetColumnFilter" },
-        { headerName: 'Emplacement', field: 'location', filter: true },
-        {
-            headerName: 'Statut', field: 'status', filter: true,
-            valueGetter: (params) => {
-
-                if (params.data.link_inscription) {
-                    return `En attente d'inscription (${new Date(params.data.date_created).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })})`;
-                }
-                return 'En cours de matching';
-            }
-        },
-        {
-            headerName: 'Actions', field: 'actions', filter: false, sortable: false,
-            cellRenderer: (params) => {
-                const { link_inscription } = params.data;
-                // Differentiate based on the presence of `link_inscription`
-                if (link_inscription) {
-                    return (
-                        <div className="dropdown dropdown-end">
-                            <div tabIndex="0" role="button" className="btn m-1 btn-ghost">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                </svg>
-                            </div>
-                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                                <li><a>Supprimer</a></li>
-                                <li><a>Relancer</a></li>
-                                <li><a onClick={() => navigator.clipboard.writeText(link_inscription) && alert('Lien copié !')}>Copier le lien d&apos;inscription</a></li>
-                            </ul>
-                        </div>
-                    );
-                }
-                return (
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex="0" role="button" className="btn m-1 btn-ghost">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                            </svg>
-                        </div>
-                        <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            <li><a>Infos</a></li>
-                            <li><a>Supprimer</a></li>
-                        </ul>
-                    </div>
-                );
-            }
-        }
-    ]);
 
     const fetchApplicants = async () => {
         try {
@@ -91,7 +33,6 @@ const ApplicantManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console
             await Axios.post('/applicants/', [newApplicant]);
             setNewApplicant({ first_name: '', last_name: '', email: '' });
             fetchApplicants();
@@ -100,7 +41,6 @@ const ApplicantManagement = () => {
         }
     };
 
-    // Handle file upload
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -110,7 +50,6 @@ const ApplicantManagement = () => {
         }
     };
 
-    // Parse the Excel file
     const handleFileUpload = (file) => {
         if (!file) {
             showMessage('Veuillez sélectionner un fichier Excel', 5000);
@@ -126,17 +65,14 @@ const ApplicantManagement = () => {
             const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             const emailList = json.flat().filter(email => typeof email === 'string' && email.includes('@'));
 
-            // Create temp applicant objects
             const tempApplicantsData = emailList.map(email => ({
                 email: email,
-                // Add other required fields if needed
             }));
 
             try {
-                // Send POST request to your API endpoint
                 const response = await Axios.post('/applicants/', tempApplicantsData);
                 showMessage(response.data.messages[0], 3000);
-                fetchApplicants(); // Refresh the applicant list
+                fetchApplicants();
             } catch (error) {
                 showMessage('Erreur lors de l\'ajout des candidats', 5000);
                 console.error('Error uploading temp applicants:', error);
@@ -144,6 +80,27 @@ const ApplicantManagement = () => {
         };
         reader.readAsArrayBuffer(file);
     };
+
+    const handleNameFilterChange = (e) => {
+        setNameFilter(e.target.value);
+    };
+
+    const handleStatusFilterChange = (e) => {
+        setStatusFilter(e.target.value);
+    };
+
+    const applyFilters = () => {
+        const filteredByName = [...filteredApplicants, ...filteredTempApplicants].filter((applicant) =>
+            (`${applicant.first_name} ${applicant.last_name}`.toLowerCase().includes(nameFilter.toLowerCase()))
+        );
+
+        const filteredByStatus = filteredByName.filter((applicant) =>
+            applicant.link_inscription ? 'En attente d\'inscription'.includes(statusFilter) : 'En cours de matching'.includes(statusFilter)
+        );
+        return filteredByStatus;
+    };
+
+    const filteredApplicantsToDisplay = applyFilters();
 
     return (
         <>
@@ -221,23 +178,85 @@ const ApplicantManagement = () => {
                 </label>
             </div>
 
+            {/* Filters Section */}
+            <div className="flex items-center justify-center space-x-4 my-10">
+                <input
+                    type="text"
+                    placeholder="Filtrer par nom"
+                    value={nameFilter}
+                    onChange={handleNameFilterChange}
+                    className="input input-bordered input-primary"
+                />
+                <select value={statusFilter} onChange={handleStatusFilterChange} className="select select-bordered select-primary">
+                    <option value="">Filtrer par statut</option>
+                    <option value="En attente d'inscription">En attente d'inscription</option>
+                    <option value="En cours de matching">En cours de matching</option>
+                </select>
+            </div>
+            <h5 className="text-2xl font-bold text-gray-100 anton text-center">Résultats: {filteredApplicantsToDisplay.length}</h5>
 
-            <div className="flex">
-                <div className="ag-theme-material-dark w-full" style={{ height: 600 }}>
-                    <AgGridReact
-                        rowData={[...filteredApplicants, ...filteredTempApplicants]}
-                        columnDefs={columnDefs}
-                        defaultColDef={{
-                            sortable: true,
-                            resizable: true,
-                            filter: true
-                        }}
-                        animateRows={true}
-                        pagination={true}
-                        paginationPageSize={50}
-                        onFirstDataRendered={(params) => params.api.sizeColumnsToFit()}
-                    />
-                </div>
+            <div className="">
+                <table className="table w-full">
+                    <thead>
+                        <tr>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Diplôme</th>
+                            <th>Type de contrat</th>
+                            <th>Emplacement</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredApplicantsToDisplay.map((applicant, index) => (
+                            <tr key={index}>
+                                <td>{applicant.first_name}</td>
+                                <td>{applicant.last_name}</td>
+                                <td>{applicant.email}</td>
+                                <td>{applicant.phone}</td>
+                                <td>{applicant.diploma}</td>
+                                <td>{applicant.contract_type}</td>
+                                <td>{applicant.location}</td>
+                                <td>
+                                    {applicant.link_inscription
+                                        ? `En attente d'inscription (${new Date(applicant.date_created).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })})`
+                                        : 'En cours de matching'}
+                                </td>
+                                <td>
+                                    {applicant.link_inscription ? (
+                                        <div className="dropdown dropdown-end">
+                                            <div tabIndex="0" role="button" className="btn m-1 btn-ghost">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                                </svg>
+                                            </div>
+                                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                <li><a>Supprimer</a></li>
+                                                <li><a>Relancer</a></li>
+                                                <li><a onClick={() => navigator.clipboard.writeText(applicant.link_inscription) && alert('Lien copié !')}>Copier le lien d&apos;inscription</a></li>
+                                            </ul>
+                                        </div>
+                                    ) : (
+                                        <div className="dropdown dropdown-end">
+                                            <div tabIndex="0" role="button" className="btn m-1 btn-ghost">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                                </svg>
+                                            </div>
+                                            <ul tabIndex="0" className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                                <li><a>Infos</a></li>
+                                                <li><a>Supprimer</a></li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </>
     );

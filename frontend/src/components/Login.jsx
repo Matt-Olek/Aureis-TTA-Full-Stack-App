@@ -34,7 +34,7 @@ const Login = () => {
         <div className="w-screen h-screen flex items-center justify-center filter">
             <div className="lg:w-1/4 bg-stone-900 flex flex-col items-center justify-center lg:rounded-3xl w-full h-full p-4 lg:h-auto lg:p-8 shadow-lg">
                 <div className="anton mt-4 p-5 w-full">
-                    <img src="/public/media/images/icon-man.svg" className="mx-auto mb-4 h-16" alt="Icon" />
+                    <img src="/media/images/icon-man.svg" className="mx-auto mb-4 h-16" alt="Icon" />
                     <h1 className="text-xl text-center text-white mb-4">Connexion</h1>
                     <form id="login-form" className="w-full" onSubmit={handleLogin}>
                         <div className="form-group mb-4">
