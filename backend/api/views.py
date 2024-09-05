@@ -161,6 +161,33 @@ class TempApplicantView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class TempCompanyView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get(self, request, token):
+        temp_company = TempCompany.objects.get(token=token)
+        temp_company_serializer = TempCompanySerializer(temp_company)
+        return Response(temp_company_serializer.data)
+
+    def post(self, request, token):
+        temp_company = TempCompany.objects.get(token=token)
+        temp_company_serializer = TempCompanySerializer(temp_company, data=request.data)
+        if temp_company_serializer.is_valid():
+            temp_company_serializer.save()
+            return Response(
+                temp_company_serializer.data, status=status.HTTP_201_CREATED
+            )
+        return Response(
+            temp_company_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, token):
+        temp_company = TempCompany.objects.get(token=token)
+        temp_company.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class RegisterUserView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
@@ -168,25 +195,54 @@ class RegisterUserView(APIView):
     def post(self, request):
         try:
             token = request.data.get("token")
-            temp_applicant = TempApplicant.objects.get(token=token)
+            temp_applicant = TempApplicant.objects.filter(token=token).first()
+            temp_company = TempCompany.objects.filter(token=token).first()
             password = request.data.get("password")
-            try:
-                user = CustomUser.objects.create_user(
-                    email=temp_applicant.email,
-                    password=password,
-                    first_name=temp_applicant.first_name,
-                    last_name=temp_applicant.last_name,
-                )
-                print(user)
-                login(request, user)
+
+            if temp_applicant:
+                try:
+                    user = CustomUser.objects.create_user(
+                        email=temp_applicant.email,
+                        type="A",
+                        password=password,
+                        first_name=temp_applicant.first_name,
+                        last_name=temp_applicant.last_name,
+                    )
+                    print(user)
+                    login(request, user)
+                    return Response(
+                        {"message": "Utilisateur créé avec succès"},
+                        status=status.HTTP_201_CREATED,
+                    )
+                except:
+                    return Response(
+                        {"message": "Utilisateur non créé"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            elif temp_company:
+                try:
+                    user = CustomUser.objects.create_user(
+                        email=temp_company.email,
+                        type="C",
+                        password=password,
+                        first_name=temp_company.name,
+                    )
+                    print(user)
+                    login(request, user)
+                    return Response(
+                        {"message": "Utilisateur créé avec succès"},
+                        status=status.HTTP_201_CREATED,
+                    )
+                except:
+                    return Response(
+                        {"message": "Utilisateur non créé"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                # Wait a second
+                time.sleep(1)
                 return Response(
-                    {"message": "Utilisateur créé avec succès"},
-                    status=status.HTTP_201_CREATED,
-                )
-            except:
-                return Response(
-                    {"message": "Utilisateur non créé"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"message": "Token not found"}, status=status.HTTP_400_BAD_REQUEST
                 )
         except:
             # Wait a second
@@ -310,9 +366,15 @@ class CompanyListCreateAPIView(APIView):
         )
 
     def post(self, request, format=None):
-        serializer = TempCompanySerializer(data=request.data)
+        serializer = TempCompanySerializer(data=request.data, many=True)
         if serializer.is_valid():
             serializer.save()
+            for temp_company_data in serializer.data:
+                email = temp_company_data.get("email")
+                name = temp_company_data.get("name")
+                link_inscription = temp_company_data.get("link_inscription")
+
+                send_registration_email(name, email, link_inscription)
             return Response(
                 {"messages": ["Temp company added successfully."]},
                 status=status.HTTP_201_CREATED,

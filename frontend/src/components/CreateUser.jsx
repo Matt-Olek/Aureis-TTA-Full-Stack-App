@@ -2,19 +2,31 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Axios from "../utils/Axios";
 
-const CreateUser = () => {
+const CreateUser = ({ type }) => {
   const { token } = useParams();
   const navigate = useNavigate();
+  const getURL =
+    type === "company"
+      ? `/temp-companies/${token}/`
+      : `/temp-applicants/${token}/`;
 
-  // State to hold form data
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-    confirm_password: "",
-  });
+  const initialState =
+    type === "company"
+      ? {
+          name: "",
+          email: "",
+          password: "",
+          confirm_password: "",
+        }
+      : {
+          first_name: "",
+          last_name: "",
+          email: "",
+          password: "",
+          confirm_password: "",
+        };
 
+  const [formData, setFormData] = useState(initialState);
   // State to hold errors
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -25,14 +37,23 @@ const CreateUser = () => {
     const fetchTempApplicantData = async () => {
       try {
         setLoading(true);
-        const response = await Axios.get(`/temp-applicants/${token}/`);
-        const { first_name, last_name, email } = response.data;
-        setFormData((prev) => ({
-          ...prev,
-          first_name,
-          last_name,
-          email,
-        }));
+        const response = await Axios.get(getURL);
+        if (type === "company") {
+          const { name, email } = response.data;
+          setFormData((prev) => ({
+            ...prev,
+            name,
+            email,
+          }));
+        } else {
+          const { first_name, last_name, email } = response.data;
+          setFormData((prev) => ({
+            ...prev,
+            first_name,
+            last_name,
+            email,
+          }));
+        }
         setLoading(false);
       } catch (error) {
         setErrors({ fetch: "Le lien n'est pas valide." });
@@ -44,31 +65,33 @@ const CreateUser = () => {
   }, [token]);
 
   // Handle form submission
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirm_password) {
-        setErrors({ password: "Les mots de passe ne correspondent pas." });
-        return;
+      setErrors({ password: "Les mots de passe ne correspondent pas." });
+      return;
     }
 
     try {
-        setLoading(true);
-        const response = await Axios.post("/user/register/", {
-            token,
-            password: formData.password,
-        });
+      setLoading(true);
+      const response = await Axios.post("/user/register/", {
+        token,
+        password: formData.password,
+      });
 
-        setSuccessMessage(response.data.message);
-        setLoading(false);
-        setTimeout(() => {
-            setSuccessMessage("");
-            navigate("/");
-        }, 1000); // Redirect after 3 seconds
+      setSuccessMessage(response.data.message);
+      setLoading(false);
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/");
+      }, 1000); // Redirect after 3 seconds
     } catch (error) {
-        setErrors({ submit: error.response?.data?.detail || "Une erreur s'est produite." });
-        setLoading(false);
+      setErrors({
+        submit: error.response?.data?.detail || "Une erreur s'est produite.",
+      });
+      setLoading(false);
     }
-};
+  };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -79,38 +102,62 @@ const handleSubmit = async (e) => {
   return (
     <div className="flex justify-center items-center manrope">
       <div className="bg-stone-900 p-8 rounded-lg shadow-md w-full max-w-md mt-10">
-        <img src="/media/images/icon-man.svg" alt="man" className="w-12 mx-auto mb-6" />
-        <h2 className="text-2xl font-semibold mb-6 text-white text-center">Créez votre compte</h2>
-        <p className="text-gray-500 mb-6 ">Ca n'est pas vous ? Contactez l'administrateur de votre école.</p>    
+        <img
+          src="/media/images/icon-man.svg"
+          alt="man"
+          className="w-12 mx-auto mb-6"
+        />
+        <h2 className="text-2xl font-semibold mb-6 text-white text-center">
+          Créez votre compte
+        </h2>
+        <p className="text-gray-500 mb-6 ">
+          Ca n&apos;est pas vous ? Contactez l&apos;administrateur.
+        </p>
 
         {loading && <p className="text-gray-500">Loading...</p>}
         {errors.fetch && <p className="text-red-500">{errors.fetch}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Prénom</label>
-            <input
-              type="text"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-              disabled
-              className="w-full border border-gray-300 rounded p-2 bg-gray-100"
-            />
-          </div>
+          {type === "company" && (
+            <div>
+              <label className="block text-sm font-medium mb-1">Nom</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                disabled
+                className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+              />
+            </div>
+          )}
+          {type === "applicant" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium mb-1">Prénom</label>
+                <input
+                  type="text"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  disabled
+                  className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Nom</label>
-            <input
-              type="text"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleChange}
-              disabled
-              className="w-full border border-gray-300 rounded p-2 bg-gray-100"
-            />
-          </div>
-
+              <div>
+                <label className="block text-sm font-medium mb-1">Nom</label>
+                <input
+                  type="text"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  disabled
+                  className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+                />
+              </div>
+            </>
+          )}
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
@@ -124,7 +171,9 @@ const handleSubmit = async (e) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Créez votre mot de passe</label>
+            <label className="block text-sm font-medium mb-1">
+              Créez votre mot de passe
+            </label>
             <input
               type="password"
               name="password"
@@ -135,7 +184,9 @@ const handleSubmit = async (e) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Confirmez le mot de passe</label>
+            <label className="block text-sm font-medium mb-1">
+              Confirmez le mot de passe
+            </label>
             <input
               type="password"
               name="confirm_password"

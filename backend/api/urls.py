@@ -10,6 +10,7 @@ from .views import (
     FormationDeleteView,
     EducationalLevelChoicesView,
     TempApplicantView,
+    TempCompanyView,
     RegisterUserView,
     ChoicesView,
     CustomUserView,
@@ -57,6 +58,7 @@ urlpatterns = [
     path(
         "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
     ),
+    path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
     path(
         "user/register/",
         RegisterUserView.as_view(),

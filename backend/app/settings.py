@@ -3,6 +3,7 @@ from datetime import timedelta
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -154,6 +155,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "api.CustomUser"
 
 # Email settings
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "trouvetonalternanceweb@gmail.com"
