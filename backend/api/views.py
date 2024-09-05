@@ -198,9 +198,11 @@ class RegisterUserView(APIView):
             temp_applicant = TempApplicant.objects.filter(token=token).first()
             temp_company = TempCompany.objects.filter(token=token).first()
             password = request.data.get("password")
-
+            print(request.data)
             if temp_applicant:
                 try:
+                    print("Creating user")
+                    print(temp_applicant.email)
                     user = CustomUser.objects.create_user(
                         email=temp_applicant.email,
                         type="A",
@@ -214,9 +216,10 @@ class RegisterUserView(APIView):
                         {"message": "Utilisateur créé avec succès"},
                         status=status.HTTP_201_CREATED,
                     )
-                except:
+                except Exception as e:
+                    print("Error creating user : ", e)
                     return Response(
-                        {"message": "Utilisateur non créé"},
+                        {"message": "Utilisateur non créé " + str(e)},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             elif temp_company:

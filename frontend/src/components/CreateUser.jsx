@@ -89,6 +89,7 @@ const CreateUser = ({ type }) => {
       setErrors({
         submit: error.response?.data?.detail || "Une erreur s'est produite.",
       });
+      console.log(error.response?.data);
       setLoading(false);
     }
   };
