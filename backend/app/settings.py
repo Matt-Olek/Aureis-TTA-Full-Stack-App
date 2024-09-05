@@ -1,5 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +14,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "37.187.49.148", "django", "nginx"]
 
-DOMAIN = "http://localhost:5173"
+DOMAIN = os.getenv("DOMAIN", "http://localhost:5173")
 
 STATIC_ROOT = BASE_DIR / "static"
 
