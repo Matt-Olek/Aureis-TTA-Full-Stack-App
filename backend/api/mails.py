@@ -25,6 +25,6 @@ def send_registration_email(first_name, email, link_inscription):
 
     # Send the email
     send_mail(subject, message, from_email, [email])
-    
-def send_registration_email_company(name, email, link_inscription):
-    
+
+
+# def send_registration_email_company(name, email, link_inscription):
