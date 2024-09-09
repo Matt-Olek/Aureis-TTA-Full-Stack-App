@@ -12,6 +12,7 @@
   "dependencies": {
     "ag-grid-community": "^32.0.2",
     "ag-grid-react": "^32.0.2",
+    "app": "file:",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "formik": "^2.4.6",

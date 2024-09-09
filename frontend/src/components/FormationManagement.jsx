@@ -27,7 +27,7 @@ const FormationList = () => {
       const response = await Axios.get("/educational-level-choices/");
       console.log("Fetched level choices:", response.data); // Debugging output
       // Convert the response object to an array of key-value pairs
-      const choicesArray = Object.entries(response.data); 
+      const choicesArray = Object.entries(response.data);
       setLevelChoices(choicesArray);
     } catch (err) {
       setError("Error fetching level choices.");
@@ -63,81 +63,87 @@ const FormationList = () => {
   };
 
   return (
-<>
-  <style>
-    {`
+    <>
+      <style>
+        {`
     body {
       background-image: none !important;
     }
     `}
-  </style>
-  <div className="py-8 px-4 mt-10">
-    <div className="max-w-2xl mx-auto shadow-md rounded-lg p-6 bg-stone-800">
-      <h1 className="text-2xl font-bold mb-6 text-center text-white">Formations</h1>
+      </style>
+      <div className="py-8 px-4 mt-10">
+        <div className="max-w-2xl mx-auto shadow-md rounded-lg p-6 bg-stone-800">
+          <h1 className="text-2xl font-bold mb-6 text-center text-white">
+            Formations
+          </h1>
 
-      {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+          {error && <p className="text-red-400 text-center mb-4">{error}</p>}
 
-      {/* List all formations */}
-        <ul className="space-y-4 mb-6">
-          {formations.map((formation) => (
-            <li
-          key={formation.id}
-          className="flex justify-between items-center bg-stone-700 px-4 py-2 rounded-md shadow-sm"
-            >
-          <span className="text-white">
-            {formation.name} - {formation.level}
-          </span>
-          <button
-            onClick={() => {
-              if (window.confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
-            removeFormation(formation.id);
-              }
-            }}
-            className="text-red-400 hover:text-red-500 font-semibold"
-          >
-            Supprimer
-          </button>
-            </li>
-          ))}
-        </ul>
+          {/* List all formations */}
+          <ul className="space-y-4 mb-6">
+            {formations.map((formation) => (
+              <li
+                key={formation.id}
+                className="flex justify-between items-center bg-stone-700 px-4 py-2 rounded-md shadow-sm"
+              >
+                <span className="text-white">
+                  {formation.name} - {formation.level}
+                </span>
+                <button
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Êtes-vous sûr de vouloir supprimer cette formation ?"
+                      )
+                    ) {
+                      removeFormation(formation.id);
+                    }
+                  }}
+                  className="text-red-400 hover:text-red-500 font-semibold"
+                >
+                  Supprimer
+                </button>
+              </li>
+            ))}
+          </ul>
 
-        {/* Add new formation form */}
-      <div className="bg-stone-700 p-4 rounded-md shadow-md">
-        <h2 className="text-xl font-semibold mb-4 text-white">Ajouter une formation</h2>
-        <div className="flex flex-col space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Nom de la formation"
-            value={newFormation.name}
-            onChange={handleChange}
-            className="p-2 border border-stone-600 rounded-md bg-stone-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        <select
-              name="level"
-              value={newFormation.level}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="" disabled>Sélectionner un Niveau</option>
-              {levelChoices.map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
+          {/* Add new formation form */}
+          <div className="bg-base-200 p-4 rounded-md shadow-md">
+            <h2 className="text-xl font-semibold mb-4 text-white">
+              Ajouter une formation
+            </h2>
+            <div className="flex flex-col space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Nom de la formation"
+                value={newFormation.name}
+                onChange={handleChange}
+                className="p-2 input input-primary"
+              />
+              <select
+                name="level"
+                value={newFormation.level}
+                onChange={handleChange}
+                className="p-2 input input-primary"
+              >
+                <option value="" disabled>
+                  Sélectionner un Niveau
                 </option>
-              ))}
-            </select>
-          <button
-            onClick={addFormation}
-            className="bg-green-300 py-2 px-4 rounded-md hover:bg-green-300 text-stone-1000 font-semibold"
-          >
-            Ajouter
-          </button>
+                {levelChoices.map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <button onClick={addFormation} className="btn btn-primary w-full">
+                Ajouter
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</>
-
+    </>
   );
 };
 

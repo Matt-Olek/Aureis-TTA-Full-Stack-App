@@ -128,7 +128,7 @@ const CreateUser = ({ type }) => {
                 value={formData.name}
                 onChange={handleChange}
                 disabled
-                className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+                className="w-full rounded p-2 text-neutral bg-gray-100"
               />
             </div>
           )}
@@ -142,7 +142,7 @@ const CreateUser = ({ type }) => {
                   value={formData.first_name}
                   onChange={handleChange}
                   disabled
-                  className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+                  className="input w-full"
                 />
               </div>
 
@@ -154,7 +154,7 @@ const CreateUser = ({ type }) => {
                   value={formData.last_name}
                   onChange={handleChange}
                   disabled
-                  className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+                  className="input w-full"
                 />
               </div>
             </>
@@ -167,7 +167,7 @@ const CreateUser = ({ type }) => {
               value={formData.email}
               onChange={handleChange}
               disabled
-              className="w-full border border-gray-300 rounded p-2 bg-gray-100"
+              className="input w-full"
             />
           </div>
 
@@ -180,7 +180,7 @@ const CreateUser = ({ type }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded p-2"
+              className="input w-full"
             />
           </div>
 
@@ -193,7 +193,7 @@ const CreateUser = ({ type }) => {
               name="confirm_password"
               value={formData.confirm_password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded p-2"
+              className="input w-full"
             />
           </div>
 
@@ -203,7 +203,7 @@ const CreateUser = ({ type }) => {
 
           <button
             type="submit"
-            className="w-full bg-green-200 text-dark font-semibold py-2 px-4 rounded hover:bg-green-300"
+            className="w-full btn btn-primary"
             disabled={loading}
           >
             {loading ? "Chargement..." : "Créer le compte"}

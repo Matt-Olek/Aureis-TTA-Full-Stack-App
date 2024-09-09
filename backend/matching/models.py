@@ -68,14 +68,7 @@ INDUSTRY_CHOICES = [
     ["Logistique", "Logistique"],
     ["Administration", "Administration"],
     ["Qualité", "Qualité"],
-    ["Agriculture", "Agriculture"],
-    ["Divertissement", "Divertissement"],
-    ["Construction", "Construction"],
-    ["Manufacture", "Manufacture"],
-    ["Éducation", "Éducation"],
-    ["Technologie", "Technologie"],
-    ["Énergie", "Énergie"],
-    ["--Autre--", "Autre"],
+    ["Autre", "Autre"],
 ]
 
 CONTRACT_TYPE_CHOICES = [

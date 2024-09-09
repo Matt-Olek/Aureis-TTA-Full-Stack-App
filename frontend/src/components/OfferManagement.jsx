@@ -15,15 +15,7 @@ const OfferManagement = () => {
   // New candidate filters
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [countryFilter, setCountryFilter] = useState("");
-  const [phoneFilter, setPhoneFilter] = useState("");
-  const [diplomaFilter, setDiplomaFilter] = useState("");
-  const [targetEducationalLevelFilter, setTargetEducationalLevelFilter] =
-    useState("");
-  const [durationFilter, setDurationFilter] = useState("");
   const [contractTypeFilter, setContractTypeFilter] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
   const [formationFilter, setFormationFilter] = useState("");
   const [formations, setFormations] = useState([]);
 
@@ -46,14 +38,7 @@ const OfferManagement = () => {
         status: statusFilter,
         first_name: firstNameFilter,
         last_name: lastNameFilter,
-        city: cityFilter,
-        country: countryFilter,
-        phone: phoneFilter,
-        diploma: diplomaFilter,
-        target_educational_level: targetEducationalLevelFilter,
-        duration: durationFilter,
         contract_type: contractTypeFilter,
-        location: locationFilter,
       },
     })
       .then((response) => {
@@ -72,14 +57,7 @@ const OfferManagement = () => {
     statusFilter,
     firstNameFilter,
     lastNameFilter,
-    cityFilter,
-    countryFilter,
-    phoneFilter,
-    diplomaFilter,
-    targetEducationalLevelFilter,
-    durationFilter,
     contractTypeFilter,
-    locationFilter,
     formationFilter,
   ]);
 
@@ -147,17 +125,15 @@ const OfferManagement = () => {
         `}
       </style>
 
-      <div className="p-6 flex w-full bg-stone-900">
+      <div className="p-6 flex w-full  h-full">
         {/* Filter Section */}
-        <div className="w-1/4 h-full bg-stone-800 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-bold mb-4">Filtres</h3>
-
+        <div className="w-1/4 h-full bg-base-200 text-white p-6 rounded-lg shadow-md">
           <h1 className="text-xl font-bold mb-4">Filtrer par formation</h1>
           <select
             id="formationFilter"
             value={formationFilter}
             onChange={(e) => setFormationFilter(e.target.value)}
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full select select-secondary"
           >
             <option value="">Toutes les formations</option>
             {formations.map((formation, index) => (
@@ -166,6 +142,7 @@ const OfferManagement = () => {
               </option>
             ))}
           </select>
+          <hr className="my-4" />
           <h1 className="text-xl font-bold mb-4">Filtres de Besoin</h1>
 
           <label htmlFor="offerFilter" className="block mb-2">
@@ -177,7 +154,7 @@ const OfferManagement = () => {
             value={offerFilter}
             onChange={(e) => setOfferFilter(e.target.value)}
             placeholder="Filtrer par nom de besoin"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full input input-primary p-2 mb-4 rounded-lg"
           />
 
           <label htmlFor="companyFilter" className="block mb-2">
@@ -189,7 +166,7 @@ const OfferManagement = () => {
             value={companyFilter}
             onChange={(e) => setCompanyFilter(e.target.value)}
             placeholder="Filtrer par nom d'entreprise"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full input input-primary p-2 mb-4 rounded-lg"
           />
 
           <hr className="my-4" />
@@ -205,7 +182,7 @@ const OfferManagement = () => {
             value={firstNameFilter}
             onChange={(e) => setFirstNameFilter(e.target.value)}
             placeholder="Filtrer par prénom"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full input input-primary p-2 mb-4 rounded-lg"
           />
 
           <label htmlFor="lastNameFilter" className="block mb-2">
@@ -217,79 +194,7 @@ const OfferManagement = () => {
             value={lastNameFilter}
             onChange={(e) => setLastNameFilter(e.target.value)}
             placeholder="Filtrer par nom"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="cityFilter" className="block mb-2">
-            Ville
-          </label>
-          <input
-            type="text"
-            id="cityFilter"
-            value={cityFilter}
-            onChange={(e) => setCityFilter(e.target.value)}
-            placeholder="Filtrer par ville"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="countryFilter" className="block mb-2">
-            Pays
-          </label>
-          <input
-            type="text"
-            id="countryFilter"
-            value={countryFilter}
-            onChange={(e) => setCountryFilter(e.target.value)}
-            placeholder="Filtrer par pays"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="phoneFilter" className="block mb-2">
-            Téléphone
-          </label>
-          <input
-            type="text"
-            id="phoneFilter"
-            value={phoneFilter}
-            onChange={(e) => setPhoneFilter(e.target.value)}
-            placeholder="Filtrer par téléphone"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="diplomaFilter" className="block mb-2">
-            Diplôme
-          </label>
-          <input
-            type="text"
-            id="diplomaFilter"
-            value={diplomaFilter}
-            onChange={(e) => setDiplomaFilter(e.target.value)}
-            placeholder="Filtrer par diplôme"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="targetEducationalLevelFilter" className="block mb-2">
-            Niveau de diplôme visé
-          </label>
-          <input
-            type="text"
-            id="targetEducationalLevelFilter"
-            value={targetEducationalLevelFilter}
-            onChange={(e) => setTargetEducationalLevelFilter(e.target.value)}
-            placeholder="Filtrer par niveau de diplôme"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="durationFilter" className="block mb-2">
-            Durée du contrat
-          </label>
-          <input
-            type="text"
-            id="durationFilter"
-            value={durationFilter}
-            onChange={(e) => setDurationFilter(e.target.value)}
-            placeholder="Filtrer par durée"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full input input-primary p-2 mb-4 rounded-lg"
           />
 
           <label htmlFor="contractTypeFilter" className="block mb-2">
@@ -301,19 +206,7 @@ const OfferManagement = () => {
             value={contractTypeFilter}
             onChange={(e) => setContractTypeFilter(e.target.value)}
             placeholder="Filtrer par type de contrat"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
-          />
-
-          <label htmlFor="locationFilter" className="block mb-2">
-            Lieu désiré
-          </label>
-          <input
-            type="text"
-            id="locationFilter"
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
-            placeholder="Filtrer par lieu désiré"
-            className="w-full p-2 mb-4 rounded-lg border border-stone-700 bg-stone-700 text-white"
+            className="w-full input input-primary p-2 mb-4 rounded-lg"
           />
 
           <button
@@ -322,14 +215,7 @@ const OfferManagement = () => {
               setStatusFilter("");
               setFirstNameFilter("");
               setLastNameFilter("");
-              setCityFilter("");
-              setCountryFilter("");
-              setPhoneFilter("");
-              setDiplomaFilter("");
-              setTargetEducationalLevelFilter("");
-              setDurationFilter("");
               setContractTypeFilter("");
-              setLocationFilter("");
               setFilteredMatches(matches);
             }}
             className="w-full p-3 bg-green-500 rounded-lg text-stone-900 font-bold mt-4 hover:bg-green-600"
@@ -345,7 +231,7 @@ const OfferManagement = () => {
           </h1>
 
           {/* Statistics Section */}
-          <div className="bg-stone-800 text-white p-4 rounded-lg mb-6 shadow-md">
+          <div className="bg-base-200 text-white p-4 rounded-lg mb-6 shadow-md">
             <h2 className="text-xl font-bold mb-2">Statistiques</h2>
             <p>
               <span className="font-semibold">Total des correspondances :</span>{" "}
@@ -365,7 +251,7 @@ const OfferManagement = () => {
               id="group-by"
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value)}
-              className="border border-gray-300 rounded-md p-2"
+              className="select select-primary"
             >
               <option value="offer">Offre</option>
               <option value="applicant">Candidat</option>
@@ -376,9 +262,9 @@ const OfferManagement = () => {
             <p className="text-gray-600">Aucune correspondance trouvée.</p>
           ) : (
             Object.keys(groupedMatches).map((key, index) => (
-              <div key={index} className="group-card mb-6">
+              <div key={index} className="group-card mb-2">
                 <button
-                  className="group-card-header text-xl font-semibold text-white p-4 rounded-t-md w-full text-left transition duration-300 ease-in-out focus:outline-none bg-stone-800"
+                  className="group-card-header text-xl font-semibold text-white p-4 rounded-t-md w-full text-left transition duration-300 ease-in-out bg-base-200 hover:border hover:border-primary focus:outline-none"
                   onClick={() => toggleItem(key)}
                 >
                   {groupBy === "offer"
@@ -386,7 +272,7 @@ const OfferManagement = () => {
                     : `Candidat : ${key}`}
                 </button>
                 <div
-                  className={`group-card-content text-white rounded-b-md p-2 bg-stone-700 ${
+                  className={`group-card-content text-white rounded-b-md p-2 bg-base-100 ${
                     openItems[key] ? "expanded" : "collapsed"
                   }`}
                 >
