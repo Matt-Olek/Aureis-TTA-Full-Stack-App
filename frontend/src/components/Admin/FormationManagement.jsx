@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Axios from "../utils/Axios";
+import Axios from "../../utils/Axios";
 
 const FormationList = () => {
   const [formations, setFormations] = useState([]);

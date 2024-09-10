@@ -15,6 +15,10 @@ from .views import (
     ChoicesView,
     CustomUserView,
     UserDetailView,
+    ApplicantInfo,
+    ApplicationTestDetailView,
+    ApplicationTestMetadataView,
+    JobOfferListCreateView,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -66,4 +70,17 @@ urlpatterns = [
     ),
     path("choices/", ChoicesView.as_view(), name="choices"),
     path("user/info/", CustomUserView.as_view(), name="user-info"),
+    path("applicant/info/", ApplicantInfo.as_view(), name="applicant-info"),
+    path(
+        "applicant_test/metadata/",
+        ApplicationTestMetadataView.as_view(),
+        name="application_test_metadata",
+    ),
+    path(
+        "applicant_test/<int:pk>/",
+        ApplicationTestDetailView.as_view(),
+        name="application_test_detail",
+    ),
+    path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
+    path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
 ]

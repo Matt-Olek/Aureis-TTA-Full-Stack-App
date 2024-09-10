@@ -28,11 +28,11 @@ const ApplicantsTable = ({ applicants }) => {
               <td>
                 {applicant.link_inscription ? (
                   <span className="badge bg-blue-300 text-blue-900 p-3">
-                    En attente d&apos;inscription
+                    Inscription
                   </span>
                 ) : (
                   <span className="badge bg-primary text-primary-content p-3">
-                    En cours de matching
+                    Matching
                   </span>
                 )}
               </td>

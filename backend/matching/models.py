@@ -170,14 +170,29 @@ class Company(models.Model):
     name = models.CharField(
         max_length=255, default="", verbose_name="Nom de l'entreprise"
     )
-    sector = models.ManyToManyField(Sector, verbose_name="Secteur d'activité")
-    codeAPE = models.ForeignKey(
-        CodeAPE, on_delete=models.CASCADE, default="", verbose_name="Code APE"
+    sector = models.ManyToManyField(
+        Sector, verbose_name="Secteur d'activité", blank=True
     )
-    adress = models.CharField(max_length=255, default="", verbose_name="Adresse")
-    city = models.CharField(max_length=255, default="", verbose_name="Ville")
-    zip_code = models.CharField(max_length=20, default="", verbose_name="Code postal")
-    country = models.CharField(max_length=255, default="France", verbose_name="Pays")
+    codeAPE = models.ForeignKey(
+        CodeAPE,
+        on_delete=models.CASCADE,
+        default="",
+        verbose_name="Code APE",
+        blank=True,
+        null=True,
+    )
+    adress = models.CharField(
+        max_length=255, default="", verbose_name="Adresse", blank=True
+    )
+    city = models.CharField(
+        max_length=255, default="", verbose_name="Ville", blank=True
+    )
+    zip_code = models.CharField(
+        max_length=20, default="", verbose_name="Code postal", blank=True
+    )
+    country = models.CharField(
+        max_length=255, default="France", verbose_name="Pays", blank=True
+    )
     description = models.TextField(
         default="", verbose_name="Description de l'activité", blank=True
     )
@@ -209,7 +224,7 @@ class JobOffer(models.Model):
         choices=TARGET_EDUCATIONAL_LEVEL_CHOICES, max_length=255, default=""
     )
     description = models.TextField(default="")
-    skills = models.ManyToManyField(Skill)
+    skills = models.ManyToManyField(Skill, null=True, blank=True)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

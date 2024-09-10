@@ -56,7 +56,7 @@ const CreateUser = ({ type }) => {
         }
         setLoading(false);
       } catch (error) {
-        setErrors({ fetch: "Le lien n'est pas valide." });
+        setErrors({ fetch: "Le lien n'est pas valide." + error.message });
         setLoading(false);
       }
     };

@@ -27,4 +27,25 @@ def send_registration_email(first_name, email, link_inscription):
     send_mail(subject, message, from_email, [email])
 
 
-# def send_registration_email_company(name, email, link_inscription):
+def send_registration_email_company(name, email, link_inscription):
+    """
+    Sends a registration email to a temporary company.
+
+    Parameters:
+        name (str): The name of the company.
+        email (str): The email address of the company.
+        link_inscription (str): The registration link for the company.
+    """
+    subject = "Votre inscription sur TrouveTonalternance.com - Aureis"
+    message = (
+        f"Bonjour,\n\n"
+        f"Merci de nous avoir confié votre besoin en recrutement d’alternants. Pour vous aider à trouver les candidats qui correspondent le plus à vos attentes, nous vous invitons à utiliser notre système de Matching affinitaire."
+        f"Il vous suffit de finaliser votre profil (6 minutes seulement) sur notre plateforme, et vous recevrez instantanément les profils.\n\n"
+        f"{link_inscription}\n\n"
+        "À très bientôt !\n"
+        "L’équipe TrouveTonalternance.com"
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    # Send the email
+    send_mail(subject, message, from_email, [email])

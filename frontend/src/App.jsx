@@ -14,12 +14,14 @@ import Search from "./pages/Search";
 import SearchApplicant from "./components/SearchApplicant";
 import ApplicantManagement from "./components/Admin/Applicant/ApplicantManagement";
 import CompanyManagement from "./components/Admin/Company/CompanyManagement";
-import MatchManagement from "./components/MatchManagement";
+import MatchManagement from "./components/Admin/Matching/MatchManagement";
 import FlyingMessage from "./components/FlyingMessage";
 import OfferManagement from "./components/OfferManagement";
-import FormationManagement from "./components/FormationManagement";
+import FormationManagement from "./components/Admin/FormationManagement";
 import CreateUser from "./components/CreateUser";
-import ApplicantPage from "./components/ApplicantPage";
+import ApplicantPage from "./components/Applicant/ApplicantPage";
+import ApplicantTest from "./components/Applicant/ApplicantTest";
+import Offers from "./components/Company/Offers";
 
 // Create context for the flying message
 const FlyingMessageContext = createContext();
@@ -65,6 +67,8 @@ function App() {
                 path="/applicant/application"
                 element={<ApplicantPage />}
               />
+              <Route path="/applicant/test" element={<ApplicantTest />} />
+              <Route path="/company/offers" element={<Offers />} />
 
               {/* Define routes that use AuthLayout */}
               <Route path="/" element={<AuthLayout />}>

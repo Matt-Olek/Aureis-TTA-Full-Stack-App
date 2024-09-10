@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import Axios from "../utils/Axios";
+import Axios from "../../utils/Axios";
 
 const ApplicantForm = () => {
   const [initialValues, setInitialValues] = useState({
@@ -28,6 +29,7 @@ const ApplicantForm = () => {
   const [applicantId, setApplicantId] = useState(null);
   const [duration, setDuration] = useState([]);
   const [formations, setFormations] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     Axios.get("/user/info/").then((response) => {
@@ -85,12 +87,14 @@ const ApplicantForm = () => {
     if (applicantId) {
       // Update existing applicant
       Axios.put(`/applicants/registration/`, values).then(() => {
-        alert("Fiche candidat mise à jour avec succès!");
+        window.alert("Fiche candidat mise à jour avec succès!");
+        navigate("/"); // Redirect to the home page
       });
     } else {
       // Create new applicant
       Axios.post("/applicants/registration/", values).then(() => {
-        alert("Fiche candidat créée avec succès!");
+        window.alert("Fiche candidat créée avec succès!");
+        navigate("/"); // Redirect to the home page
       });
     }
   };

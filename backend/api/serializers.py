@@ -88,7 +88,18 @@ class SectorSerializer(serializers.ModelSerializer):
 class Application_testSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application_test
-        fields = "__all__"
+        exclude = ["application", "id"]
+
+    def get_field_metadata(self):
+        field_metadata = {}
+        for field_name, field in self.fields.items():
+            field_metadata[field_name] = {
+                "type": field.__class__.__name__,
+                "choices": field.choices if hasattr(field, "choices") else None,
+                "label": field.label,
+                "required": field.required,
+            }
+        return field_metadata
 
 
 class Offer_testSerializer(serializers.ModelSerializer):

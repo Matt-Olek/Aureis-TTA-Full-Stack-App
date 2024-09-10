@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Axios from "../utils/Axios";
+import Axios from "../../../utils/Axios";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import { useFlyingMessage } from "../App";
+import { useFlyingMessage } from "../../../App";
 import StatusTimeline from "./StatusTimeline";
 
 const MatchDetailsModal = ({ match, onClose }) => {

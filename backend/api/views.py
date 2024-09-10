@@ -26,10 +26,12 @@ from matching.models import (
     match_applicant,
     Application_test,
     Offer_test,
+    JobOffer,
     TempApplicant,
     TempCompany,
     Formation,
     Skill,
+    company_user_link,
     TARGET_EDUCATIONAL_LEVEL_CHOICES,
     CONTRACT_TYPE_CHOICES,
     INDUSTRY_CHOICES,
@@ -44,11 +46,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from django_filters import rest_framework as filters
 from rest_framework import generics
+from rest_framework import viewsets
 from .filters import MatchApplicantFilter
-from .mails import send_registration_email
+from .mails import send_registration_email, send_registration_email_company
 from api.models import CustomUser
 import time
-from rest_framework.authentication import TokenAuthentication
+from django.shortcuts import get_object_or_404
 
 
 # ----------------- Models Serializer Views ----------------- #
@@ -99,6 +102,144 @@ class OfferTokenView(APIView):
         return Response(serializer.data)
 
 
+class JobOfferListCreateView(APIView):
+    def get(self, request):
+        user = request.user
+        try:
+            link = company_user_link.objects.get(user=user)
+            company = link.company
+            job_offers = JobOffer.objects.filter(company=company)
+            serializer = JobOfferSerializer(job_offers, many=True)
+            return Response(serializer.data)
+        except:
+            return Response(
+                {"message": "Company does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    def post(self, request):
+        data = request.data
+        user = request.user
+        try:
+            link = company_user_link.objects.get(user=user)
+            company = link.company
+            data["company"] = company.id
+            serializer = JobOfferSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(
+                {"message": "Company does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    def put(self, request, pk):
+        job_offer = get_object_or_404(JobOffer, pk=pk)
+        serializer = JobOfferSerializer(job_offer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        job_offer = get_object_or_404(JobOffer, pk=pk)
+        job_offer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ApplicationTestMetadataView(APIView):
+    """
+    API endpoint that provides metadata for the Application_test model fields.
+    """
+
+    def get(self, request):
+        serializer = Application_testSerializer()
+        metadata = serializer.get_field_metadata()
+        return Response(metadata, status=status.HTTP_200_OK)
+
+
+class ApplicationTestDetailView(APIView):
+    """
+    API endpoint that retrieves, updates, or deletes an Application_test instance.
+    """
+
+    def get(self, request):
+        try:
+            user = request.user
+            applicant = Applicant.objects.get(user=user)
+            application = Application.objects.get(applicant=applicant)
+            application_test = Application_test.objects.get(application=application)
+            serializer = Application_testSerializer(application_test)
+            return Response(serializer.data)
+        except Applicant.DoesNotExist:
+            return Response(
+                {"message": "Applicant does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Application.DoesNotExist:
+            return Response(
+                {"message": "Application does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Application_test.DoesNotExist:
+            return Response(
+                {"message": "Application test does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def put(self, request):
+        try:
+            user = request.user
+            applicant = Applicant.objects.get(user=user)
+            application = Application.objects.get(applicant=applicant)
+            try:
+                application_test = Application_test.objects.get(application=application)
+            except Application_test.DoesNotExist:
+                application_test = Application_test(application=application)
+            serializer = Application_testSerializer(application_test, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Applicant.DoesNotExist:
+            return Response(
+                {"message": "Applicant does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Application.DoesNotExist:
+            return Response(
+                {"message": "Application does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def delete(self, request, pk):
+        try:
+            application_test = get_object_or_404(Application_test, pk=pk)
+            application_test.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Application_test.DoesNotExist:
+            return Response(
+                {"message": "Application test does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 class ApplicantFilter(filters.FilterSet):
     class Meta:
         model = Applicant
@@ -129,6 +270,37 @@ class ApplicationView(APIView):
         applications = Application.objects.all()
         serializer = ApplicationSerializer(applications, many=True)
         return Response(serializer.data)
+
+
+class ApplicantInfo(APIView):
+    def get(self, request):
+        applicant_user = request.user
+        applicant_page = False
+        applicant_test = False
+        applicant_matches = False
+        try:
+            applicant = Applicant.objects.get(user=applicant_user)
+            applicant_page = True
+        except:
+            pass
+        try:
+            application = Application.objects.get(applicant=applicant)
+            applicant_test = Application_test.objects.get(application=application)
+            applicant_test = True
+        except:
+            pass
+        try:
+            applicant_matches = match_applicant.objects.filter(applicant=applicant)
+            applicant_matches = True
+        except:
+            pass
+        return Response(
+            {
+                "applicant_page": applicant_page,
+                "applicant_test": applicant_test,
+                "applicant_matches": applicant_matches,
+            }
+        )
 
 
 class TempApplicantView(APIView):
@@ -230,15 +402,21 @@ class RegisterUserView(APIView):
                         password=password,
                         first_name=temp_company.name,
                     )
+                    company = Company.objects.create(
+                        name=temp_company.name,
+                    )
+                    temp_company.company = company
+                    temp_company.save()
+                    company_user_link.objects.create(company=company, user=user)
                     print(user)
                     login(request, user)
                     return Response(
                         {"message": "Utilisateur créé avec succès"},
                         status=status.HTTP_201_CREATED,
                     )
-                except:
+                except Exception as e:
                     return Response(
-                        {"message": "Utilisateur non créé"},
+                        {"message": "Utilisateur non créé" + str(e)},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             else:
@@ -326,6 +504,10 @@ class FullApplicantCreateView(APIView):
             tempapplicant = TempApplicant.objects.get(email=data["email"])
             tempapplicant.applicant = serializer.instance
             tempapplicant.save()
+            application = Application.objects.get_or_create(
+                applicant=serializer.instance
+            )[0]
+            application.save()
 
             return Response(
                 {"messages": ["Applicants successfully added"]},
@@ -342,6 +524,10 @@ class FullApplicantCreateView(APIView):
         serializer = ApplicantSerializer(applicant, data=data)
         if serializer.is_valid():
             serializer.save()
+            application = Application.objects.get_or_create(
+                applicant=serializer.instance
+            )[0]
+            application.save()
             return Response(
                 {"messages": ["Applicants successfully updated"]},
                 status=status.HTTP_201_CREATED,
@@ -377,7 +563,7 @@ class CompanyListCreateAPIView(APIView):
                 name = temp_company_data.get("name")
                 link_inscription = temp_company_data.get("link_inscription")
 
-                send_registration_email(name, email, link_inscription)
+                send_registration_email_company(name, email, link_inscription)
             return Response(
                 {"messages": ["Temp company added successfully."]},
                 status=status.HTTP_201_CREATED,
