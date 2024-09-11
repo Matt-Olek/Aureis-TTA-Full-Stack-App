@@ -51,6 +51,7 @@ from .filters import MatchApplicantFilter
 from .mails import send_registration_email, send_registration_email_company
 from api.models import CustomUser
 import time
+from matching.matching_process import launch_matching
 from django.shortcuts import get_object_or_404
 
 
@@ -632,4 +633,18 @@ class ChoicesView(APIView):
 
         return Response(
             {"message": "No choices found."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+
+class LaunchMatchingView(APIView):
+    def post(self, request):
+        user = request.user
+        if user.is_superuser:
+            launch_matching()
+            return Response(
+                {"message": "Matchings launched successfully"},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
         )

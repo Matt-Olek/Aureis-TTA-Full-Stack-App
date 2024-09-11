@@ -22,6 +22,7 @@ import CreateUser from "./components/CreateUser";
 import ApplicantPage from "./components/Applicant/ApplicantPage";
 import ApplicantTest from "./components/Applicant/ApplicantTest";
 import Offers from "./components/Company/Offers";
+import ConfigTests from "./components/Admin/ConfigTests";
 
 // Create context for the flying message
 const FlyingMessageContext = createContext();
@@ -99,6 +100,7 @@ function App() {
                     path="formation-management"
                     element={<FormationManagement />}
                   />
+                  <Route path="config-tests" element={<ConfigTests />} />
                 </Route>
               </Route>
 
