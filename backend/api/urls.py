@@ -19,6 +19,7 @@ from .views import (
     ApplicationTestDetailView,
     ApplicationTestMetadataView,
     JobOfferListCreateView,
+    LaunchMatchingView,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -83,4 +84,5 @@ urlpatterns = [
     ),
     path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
+    path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),
 ]
