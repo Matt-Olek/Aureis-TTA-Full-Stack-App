@@ -32,7 +32,7 @@ interface Choice {
 }
 
 interface ApplicantFormProps {
-  applicantId: string;
+  applicantId: string | undefined;
 }
 
 const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {

@@ -56,49 +56,47 @@ const CreateUser: React.FC<CreateUserProps> = ({ type }) => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  useEffect(() => {
-    const fetchTempApplicantData = async () => {
-      try {
-        setLoading(true);
-        const response = await Axios.get(
-          type === "company"
-            ? `/temp-companies/${token}/`
-            : `/temp-applicants/${token}/`
+  const fetchTempApplicantData = async () => {
+    try {
+      setLoading(true);
+      const response = await Axios.get(
+        type === "company"
+          ? `/temp-companies/${token}/`
+          : `/temp-applicants/${token}/`
+      );
+      if (type === "company") {
+        const { name, email } = response.data;
+        setFormData(
+          (prevFormData) =>
+            ({
+              ...prevFormData,
+              name,
+              email,
+            } as FormDataCompany)
         );
-        if (type === "company") {
-          const { name, email } = response.data;
-          setFormData(
-            (prevFormData) =>
-              ({
-                ...prevFormData,
-                name,
-                email,
-              } as FormDataCompany)
-          );
-        } else {
-          const { first_name, last_name, email } = response.data;
-          setFormData(
-            (prevFormData) =>
-              ({
-                ...prevFormData,
-                first_name,
-                last_name,
-                email,
-              } as FormDataApplicant)
-          );
-        }
-        setLoading(false);
-      } catch {
-        setErrors({
-          fetch:
-            "Une erreur s'est produite lors de la récupération des données.",
-        });
-        setLoading(false);
+      } else {
+        const { first_name, last_name, email } = response.data;
+        setFormData(
+          (prevFormData) =>
+            ({
+              ...prevFormData,
+              first_name,
+              last_name,
+              email,
+            } as FormDataApplicant)
+        );
       }
-    };
-
+      setLoading(false);
+    } catch {
+      setErrors({
+        fetch: "Une erreur s'est produite lors de la récupération des données.",
+      });
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchTempApplicantData();
-  }, [token, type, formData]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

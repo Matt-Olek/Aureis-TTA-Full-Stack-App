@@ -78,7 +78,7 @@ urlpatterns = [
         name="application_test_metadata",
     ),
     path(
-        "applicant_test/<int:pk>/",
+        "applicant_test/",
         ApplicationTestDetailView.as_view(),
         name="application_test_detail",
     ),
