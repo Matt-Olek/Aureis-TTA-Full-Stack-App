@@ -1,54 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Typewriter from "../utils/Typewriter";
 import HomeModules from "./HomeModules";
 
 const Home: React.FC = () => {
-  const [lines, setLines] = useState<string[]>([]);
-  const [currentLine, setCurrentLine] = useState<number>(0);
-  const [currentChar, setCurrentChar] = useState<number>(0);
-
-  const speeds: number[] = [25, 35, 30, 40, 20];
-
-  useEffect(() => {
-    const lines1 = [
-      "La plateforme de gestion",
-      "qui matche les alternants",
-      "et les entreprises en un clic !",
-    ];
-    const lines2 = [
-      "La plateforme de gestion",
-      "qui connecte les alternants",
-      "et les entreprises en un clic !",
-    ];
-    const randomLines = Math.random() < 0.5 ? lines1 : lines2;
-    setLines(randomLines);
-
-    // Start typing effect
-    typeWriter();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const typeWriter = () => {
-    if (currentLine < lines.length) {
-      const lineElement = document.getElementById(
-        `line${currentLine + 1}`
-      ) as HTMLParagraphElement;
-      const speed = speeds[currentLine];
-
-      if (currentChar < lines[currentLine].length) {
-        lineElement.innerHTML += lines[currentLine].charAt(currentChar);
-        setCurrentChar(currentChar + 1);
-        setTimeout(typeWriter, speed);
-      } else {
-        lineElement.innerHTML += "<br>";
-        setCurrentLine(currentLine + 1);
-        setCurrentChar(0);
-        setTimeout(typeWriter, speed);
-      }
-    }
-  };
-
   return (
     <>
       <section

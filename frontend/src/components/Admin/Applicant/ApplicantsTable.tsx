@@ -1,6 +1,8 @@
 import React from "react";
+import Axios from "../../../utils/Axios";
 
 interface Applicant {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -8,6 +10,7 @@ interface Applicant {
   diploma?: string;
   contract_type?: string;
   location?: string;
+  token: string;
   link_inscription?: string;
 }
 
@@ -25,11 +28,35 @@ interface ActionDropdownProps {
 }
 
 const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
+  const deleteApplicant = (id: string) => {
+    Axios.delete(`/applicant/${id}/`)
+      .catch((error) => console.error("Error deleting applicant:", error))
+      .finally(
+        () =>
+          (applicants = applicants.filter(
+            (applicant) => applicant.link_inscription !== id
+          ))
+      );
+  };
+
+  const deleteTempApplicant = (token: string) => {
+    Axios.delete(`/temp-applicants/${token}/`)
+      .catch((error) => console.error("Error deleting temp applicant:", error))
+      .finally(
+        () =>
+          (applicants = applicants.filter(
+            (applicant) => applicant.link_inscription !== token
+          ))
+      );
+  };
+
   return (
     <div className="overflow-x-scroll w-full mt-10 h-96">
       <table className="table w-full">
         <thead className="relative sticky top-0 z-10 bg-base-100">
           <tr>
+            <th>ID Candidat</th>
+
             <th>Prénom</th>
             <th>Nom</th>
             <th>Email</th>
@@ -44,6 +71,7 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
         <tbody>
           {applicants.map((applicant, index) => (
             <tr key={index}>
+              <td>{applicant.id}</td>
               <td>{applicant.first_name}</td>
               <td>{applicant.last_name}</td>
               <td>{applicant.email}</td>
@@ -67,21 +95,29 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                   options={
                     applicant.link_inscription
                       ? [
-                          { label: "Supprimer", action: () => {} },
+                          {
+                            label: "Supprimer",
+                            action: () => {
+                              deleteTempApplicant(applicant.token);
+                            },
+                          },
                           { label: "Relancer", action: () => {} },
                           {
                             label: "Copier le lien d'inscription",
                             action: () => {
-                              navigator.clipboard.writeText(
-                                applicant.link_inscription as string
-                              );
+                              navigator.clipboard.writeText(applicant.id);
                               alert("Lien copié !");
                             },
                           },
                         ]
                       : [
                           { label: "Infos", action: () => {} },
-                          { label: "Supprimer", action: () => {} },
+                          {
+                            label: "Supprimer",
+                            action: () => {
+                              deleteApplicant(applicant.id);
+                            },
+                          },
                         ]
                   }
                 />

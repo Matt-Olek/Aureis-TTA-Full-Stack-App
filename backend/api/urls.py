@@ -3,6 +3,8 @@ from .views import (
     ApplicantSearchView,
     SectorView,
     ApplicantListCreateAPIView,
+    ApplicantView,
+    TempApplicantView,
     FullApplicantCreateView,
     CompanyListCreateAPIView,
     MatchApplicantListCreateView,
@@ -26,9 +28,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
+    ### Views à garder
     path("user/", UserDetailView.as_view(), name="user_detail"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("applicant/", ApplicantView.as_view(), name="applicant-list-create"),
+    path("applicant/<int:pk>/", ApplicantView.as_view(), name="applicant-detail"),
     path(
         "applicants/",
         ApplicantListCreateAPIView.as_view(),
@@ -61,10 +66,6 @@ urlpatterns = [
         name="educational-level-choices",
     ),
     path(
-        "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
-    ),
-    path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
-    path(
         "user/register/",
         RegisterUserView.as_view(),
         name="register-temp-applicant",
@@ -85,4 +86,10 @@ urlpatterns = [
     path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
     path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),
+    ### Views à supprimer/revoir
+    path("temp-applicants/", TempApplicantView.as_view(), name="temp-applicant"),
+    path(
+        "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
+    ),
+    path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
 ]

@@ -475,6 +475,26 @@ class ApplicantListCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ApplicantView(APIView):
+    def get(self, request):
+        applicants = Applicant.objects.all()
+        serializer = ApplicantSerializer(applicants, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        applicant = get_object_or_404(Applicant, pk=pk)
+        applicant.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, pk):
+        applicant = get_object_or_404(Applicant, pk=pk)
+        serializer = ApplicantSerializer(applicant, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class FullApplicantCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
