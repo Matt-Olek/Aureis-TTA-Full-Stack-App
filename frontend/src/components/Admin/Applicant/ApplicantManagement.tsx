@@ -34,9 +34,12 @@ const ApplicantManagement: React.FC = () => {
 
   const fetchApplicants = async () => {
     try {
-      const response = await Axios.get("/applicants/");
-      setFilteredApplicants(response.data.applicants);
-      setFilteredTempApplicants(response.data.temp_applicants);
+      const response_applicants = await Axios.get("/applicant/");
+      const response_temp_applicants = await Axios.get("/temp-applicants/");
+      console.log("Applicants:", response_applicants.data);
+      console.log("Temp Applicants:", response_temp_applicants.data);
+      setFilteredApplicants(response_applicants.data);
+      setFilteredTempApplicants(response_temp_applicants.data);
     } catch {
       console.error("Error fetching applicants");
     }
@@ -54,7 +57,7 @@ const ApplicantManagement: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await Axios.post("/applicants/", [newApplicant]);
+      await Axios.post("/temp-applicants/", [newApplicant]);
       setNewApplicant({ first_name: "", last_name: "", email: "" });
       fetchApplicants();
     } catch {

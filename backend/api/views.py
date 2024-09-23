@@ -308,25 +308,31 @@ class TempApplicantView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
-    def get(self, request, token):
-        print("GET")
-        temp_applicant = TempApplicant.objects.get(token=token)
-        temp_applicant_serializer = TempApplicantSerializer(temp_applicant)
+    def get(self, request, token=None):
+        if token:
+            temp_applicant = TempApplicant.objects.get(token=token)
+            temp_applicant_serializer = TempApplicantSerializer(temp_applicant)
+        else:
+            temp_applicants = TempApplicant.objects.all()
+            temp_applicant_serializer = TempApplicantSerializer(
+                temp_applicants, many=True
+            )
+
         return Response(temp_applicant_serializer.data)
 
-    def post(self, request, token):
-        temp_applicant = TempApplicant.objects.get(token=token)
-        temp_applicant_serializer = TempApplicantSerializer(
-            temp_applicant, data=request.data
-        )
-        if temp_applicant_serializer.is_valid():
-            temp_applicant_serializer.save()
+    def post(self, request):
+        serializer = TempApplicantSerializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
             return Response(
-                temp_applicant_serializer.data, status=status.HTTP_201_CREATED
+                {"message": "Temporary Applicant created successfully"},
+                status=status.HTTP_201_CREATED,
             )
-        return Response(
-            temp_applicant_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
+        else:
+            print(serializer.errors)
+            return Response(
+                {"message": "An error occured"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def delete(self, request, token):
         temp_applicant = TempApplicant.objects.get(token=token)
@@ -599,18 +605,32 @@ class MatchApplicantListCreateView(generics.ListCreateAPIView):
     filterset_class = MatchApplicantFilter
 
 
-class FormationListCreateView(generics.ListCreateAPIView):
+class FormationView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
-    queryset = Formation.objects.all()
-    serializer_class = FormationSerializer
 
+    def get(self, request):
+        formations = Formation.objects.all()
+        serializer = FormationSerializer(formations, many=True)
+        return Response(serializer.data)
 
-class FormationDeleteView(generics.DestroyAPIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
-    queryset = Formation.objects.all()
-    serializer_class = FormationSerializer
+    def post(self, request):
+        formation_serializer = FormationSerializer(request.data)
+        if formation_serializer.is_valid:
+            formation_serializer.save
+            return Response(
+                {"message": "Formation successfully added"},
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                formation_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def delete(self, request, pk):
+        formation = get_object_or_404(Formation, pk=pk)
+        formation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EducationalLevelChoicesView(APIView):

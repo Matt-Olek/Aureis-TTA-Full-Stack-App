@@ -132,14 +132,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
 
   return (
     <>
-      <style>
-        {`
-                body {
-                    font-family: 'Nunito', sans-serif;
-                    
-                    }
-                    `}
-      </style>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}

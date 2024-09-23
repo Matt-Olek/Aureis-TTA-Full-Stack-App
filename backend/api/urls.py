@@ -2,14 +2,12 @@ from django.urls import path
 from .views import (
     ApplicantSearchView,
     SectorView,
-    ApplicantListCreateAPIView,
     ApplicantView,
     TempApplicantView,
     FullApplicantCreateView,
     CompanyListCreateAPIView,
     MatchApplicantListCreateView,
-    FormationListCreateView,
-    FormationDeleteView,
+    FormationView,
     EducationalLevelChoicesView,
     TempApplicantView,
     TempCompanyView,
@@ -28,17 +26,26 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
-    ### Views à garder
+    ### User & Tokens
     path("user/", UserDetailView.as_view(), name="user_detail"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    ### Model Views
+    #
+    # Applicants
     path("applicant/", ApplicantView.as_view(), name="applicant-list-create"),
     path("applicant/<int:pk>/", ApplicantView.as_view(), name="applicant-detail"),
+    # Temp Applicants
+    path("temp-applicants/", TempApplicantView.as_view(), name="temp-applicant"),
     path(
-        "applicants/",
-        ApplicantListCreateAPIView.as_view(),
-        name="applicant-list-create",
+        "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
     ),
+    path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
+    #
+    #
+    #
+    #
+    #
     path(
         "applicants/registration/",
         FullApplicantCreateView.as_view(),
@@ -54,12 +61,8 @@ urlpatterns = [
     path(
         "search/applicant/", ApplicantSearchView.as_view(), name="applicant-list-create"
     ),
-    path(
-        "formations/", FormationListCreateView.as_view(), name="formation-list-create"
-    ),
-    path(
-        "formations/<int:pk>/", FormationDeleteView.as_view(), name="formation-delete"
-    ),
+    path("formations/", FormationView.as_view(), name="formation-list-create"),
+    path("formations/<int:pk>/", FormationView.as_view(), name="formation-delete"),
     path(
         "educational-level-choices/",
         EducationalLevelChoicesView.as_view(),
@@ -87,9 +90,9 @@ urlpatterns = [
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
     path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),
     ### Views à supprimer/revoir
-    path("temp-applicants/", TempApplicantView.as_view(), name="temp-applicant"),
-    path(
-        "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
-    ),
-    path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
+    # path(
+    #     "applicants/",
+    #     ApplicantListCreateAPIView.as_view(),
+    #     name="applicant-list-create",
+    # ),
 ]

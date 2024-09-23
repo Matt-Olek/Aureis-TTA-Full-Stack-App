@@ -105,7 +105,10 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                           {
                             label: "Copier le lien d'inscription",
                             action: () => {
-                              navigator.clipboard.writeText(applicant.id);
+                              navigator.clipboard.writeText(
+                                `${applicant.link_inscription}`
+                              );
+
                               alert("Lien copié !");
                             },
                           },

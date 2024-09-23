@@ -30,8 +30,21 @@ const Navbar: React.FC = () => {
             />
             <span className="text-lg text-green-300">AUREIS - TTA</span>
           </a>
+          {user.loggedIn ? (
+            user.is_superuser ? (
+              <p className="text-gray-100 text-lg">Compte Administrateur</p>
+            ) : user.is_staff ? (
+              <p className="text-gray-100 text-lg">Compte Staff</p>
+            ) : user.type === "A" ? (
+              <p className="text-gray-100 text-lg">Compte Candidat</p>
+            ) : (
+              <p className="text-gray-100 text-lg">Compte Entreprise</p>
+            )
+          ) : (
+            <p className="text-gray-100 text-lg">Connexion</p>
+          )}
         </div>
-        <div className="navbar-center hidden md:flex"></div>
+        <div className="navbar-center md:flex"></div>
 
         <div className="navbar-end flex space-x-3 rtl:space-x-reverse">
           {user.loggedIn ? (
