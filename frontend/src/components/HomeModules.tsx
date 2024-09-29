@@ -7,6 +7,7 @@ import Axios from "../utils/Axios";
 interface User {
   loggedIn: boolean;
   is_superuser: boolean;
+  is_staff: boolean;
   type: "A" | "C";
 }
 
@@ -15,10 +16,16 @@ interface FetchInfoStatus {
   applicant_test: boolean;
   applicant_matches: boolean;
 }
+interface Formation {
+  id: number;
+  name: string;
+  level: string;
+}
 
 const HomeModules: React.FC = () => {
   const { user } = useAuth() as { user: User }; // Casting to User type
   const navigate = useNavigate();
+  const [formations, setFormations] = useState<Formation[]>([]);
   const [fetchInfoStatus, setFetchInfoStatus] = useState<FetchInfoStatus>({
     applicant_page: false,
     applicant_test: false,
@@ -40,7 +47,19 @@ const HomeModules: React.FC = () => {
 
       fetchInfo();
     }
-  }, [user]);
+    if (user.is_staff) {
+      const fetchFormations = async () => {
+        try {
+          const response = await Axios.get("/formations/");
+          console.log(response.data);
+          setFormations(response.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchFormations();
+    }
+  }, [user.type, user.is_staff]);
 
   if (!user.loggedIn) {
     return (
@@ -82,6 +101,46 @@ const HomeModules: React.FC = () => {
             onClick={() => navigate("/admin/formation-management")}
           >
             Formations
+          </button>
+        </div>
+      </div>
+    );
+  } else if (user.is_staff) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full mt-5">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">
+          Gestion des formations :
+        </h1>
+        <div className="flex flex-row w-full mb-6 justify-center">
+          {formations.map((formation) => (
+            <li
+              key={formation.id}
+              className="flex justify-between items-center bg-stone-700 px-4 py-2 rounded-md shadow-sm m-1"
+            >
+              <span className="text-white">
+                {formation.name} - {formation.level}
+              </span>
+            </li>
+          ))}
+        </div>
+        <div className="join">
+          <button
+            className="btn btn-primary btn-outline join-item"
+            onClick={() => navigate("/admin/applicant-management")}
+          >
+            Candidats
+          </button>
+          <button
+            className="btn btn-secondary btn-outline join-item"
+            onClick={() => navigate("/admin/company-management")}
+          >
+            Entreprises
+          </button>
+          <button
+            className="btn  btn-outline join-item"
+            onClick={() => navigate("/admin/offer-management")}
+          >
+            Matching
           </button>
         </div>
       </div>

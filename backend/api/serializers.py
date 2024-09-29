@@ -12,6 +12,7 @@ from matching.models import (
     TempApplicant,
     TempCompany,
     Formation,
+    FormationmanagementLink,
     Skill,
 )
 from api.models import CustomUser
@@ -147,3 +148,12 @@ class FormationSerializer(serializers.ModelSerializer):
 
 class EducationalLevelChoicesSerializer(serializers.Serializer):
     level = serializers.ChoiceField(choices=Formation._meta.get_field("level").choices)
+
+
+class FormationmanagementLinkSerializer(serializers.ModelSerializer):
+    # manager = serializers.StringRelatedField()
+    # formation = serializers.StringRelatedField()
+
+    class Meta:
+        model = FormationmanagementLink
+        fields = "__all__"

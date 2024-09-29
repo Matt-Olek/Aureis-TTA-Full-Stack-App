@@ -16,6 +16,9 @@ import CreateUser from "./components/CreateUser";
 import ApplicantPage from "./components/Applicant/ApplicantPage";
 import ApplicantTest from "./components/Applicant/ApplicantTest";
 import Offers from "./components/Company/Offers";
+import ManagerManagement from "./components/Admin/ManagerManagement";
+import ResetPassword from "./components/ResetPassword";
+import FormationStatistics from "./components/Admin/FormationStatistics";
 
 function App() {
   return (
@@ -25,6 +28,7 @@ function App() {
         <Routes>
           {/* Define routes that don't need layout */}
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="/register-applicant/:token"
             element={<CreateUser type="applicant" />}
@@ -52,6 +56,14 @@ function App() {
               <Route
                 path="formation-management"
                 element={<FormationManagement />}
+              />
+              <Route
+                path="manager-management"
+                element={<ManagerManagement />}
+              />
+              <Route
+                path="formation-statistics"
+                element={<FormationStatistics />}
               />
             </Route>
           </Route>

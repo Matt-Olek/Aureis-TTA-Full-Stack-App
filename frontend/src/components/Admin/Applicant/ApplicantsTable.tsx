@@ -50,17 +50,23 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
       );
   };
 
+  const recontactApplicant = (id: string) => {
+    Axios.post(`/temp-applicants/${id}/recontact/`).catch((error) =>
+      console.error("Error recontacting applicant:", error)
+    );
+  };
+
   return (
     <div className="overflow-x-scroll w-full mt-10 h-96">
-      <table className="table w-full">
+      <table className="table w-full table-zebra">
         <thead className="relative sticky top-0 z-10 bg-base-100">
           <tr>
-            <th>ID Candidat</th>
+            {/* <th>ID Candidat</th> */}
 
             <th>Prénom</th>
             <th>Nom</th>
             <th>Email</th>
-            <th>Téléphone</th>
+            {/* <th>Téléphone</th> */}
             <th>Diplôme</th>
             <th>Type de contrat</th>
             <th>Emplacement</th>
@@ -71,11 +77,11 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
         <tbody>
           {applicants.map((applicant, index) => (
             <tr key={index}>
-              <td>{applicant.id}</td>
+              {/* <td>{applicant.id}</td> */}
               <td>{applicant.first_name}</td>
               <td>{applicant.last_name}</td>
               <td>{applicant.email}</td>
-              <td>{applicant.phone || "-"}</td>
+              {/* <td>{applicant.phone || "-"}</td> */}
               <td>{applicant.diploma || "-"}</td>
               <td>{applicant.contract_type || "-"}</td>
               <td>{applicant.location || "-"}</td>
@@ -101,7 +107,12 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                               deleteTempApplicant(applicant.token);
                             },
                           },
-                          { label: "Relancer", action: () => {} },
+                          {
+                            label: "Relancer",
+                            action: () => {
+                              recontactApplicant(applicant.id);
+                            },
+                          },
                           {
                             label: "Copier le lien d'inscription",
                             action: () => {

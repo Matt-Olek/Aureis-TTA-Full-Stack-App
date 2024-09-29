@@ -8,8 +8,10 @@ export function AdminStaffAuthLayout(): JSX.Element {
     return <div>Loading...</div>; // Or a spinner/loading indicator
   }
 
-  if (!user.loggedIn || !user.is_staff || !user.is_superuser) {
+  if (!user.loggedIn) {
     return <Navigate to="/login" />;
+  } else if (!user.is_staff) {
+    return <Navigate to="/" />;
   }
 
   return (

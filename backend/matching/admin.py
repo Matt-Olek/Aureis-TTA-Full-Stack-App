@@ -15,6 +15,7 @@ from matching.models import (
     company_user_link,
     match_applicant,
     Formation,
+    FormationmanagementLink,
 )
 
 # Register your models here.
@@ -33,3 +34,4 @@ admin.site.register(TempCompany)
 admin.site.register(company_user_link)
 admin.site.register(match_applicant)
 admin.site.register(Formation)
+admin.site.register(FormationmanagementLink)

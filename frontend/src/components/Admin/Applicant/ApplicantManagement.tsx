@@ -156,9 +156,9 @@ const ApplicantManagement: React.FC = () => {
       />
       <div className="flex items-center justify-center mt-10">
         <img
-          src="/media/images/icon-man.svg"
+          src="/media/images/alternant.svg"
           className="h-20 mb-5 fade-in"
-          alt="Icon"
+          alt="Alternant"
         />
       </div>
       <div className="flex items-center justify-center space-x-4 my-5">

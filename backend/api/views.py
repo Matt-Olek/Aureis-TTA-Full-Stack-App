@@ -14,6 +14,7 @@ from api.serializers import (
     MatchApplicantSerializer,
     FormationSerializer,
     EducationalLevelChoicesSerializer,
+    FormationmanagementLinkSerializer,
 )
 from matching.models import (
     Sector,
@@ -35,25 +36,33 @@ from matching.models import (
     TARGET_EDUCATIONAL_LEVEL_CHOICES,
     CONTRACT_TYPE_CHOICES,
     INDUSTRY_CHOICES,
+    FormationmanagementLink,
 )
 from rest_framework.views import APIView
-from django.contrib.auth import logout, login
+from django.contrib.auth import login
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate, login
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from django.contrib.auth import login
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from django_filters import rest_framework as filters
 from rest_framework import generics
-from rest_framework import viewsets
 from .filters import MatchApplicantFilter
-from .mails import send_registration_email, send_registration_email_company
+from .mails import (
+    send_registration_email,
+    send_registration_email_company,
+    send_registration_email_staff,
+)
 from api.models import CustomUser
 import time
 from matching.matching_process import launch_matching
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.conf import settings
+from django.db.models import Case, When, Value
 
 # ----------------- Models Serializer Views ----------------- #
 
@@ -324,6 +333,12 @@ class TempApplicantView(APIView):
         serializer = TempApplicantSerializer(data=request.data, many=True)
         if serializer.is_valid():
             serializer.save()
+            for temp_applicant_data in serializer.data:
+                email = temp_applicant_data.get("email")
+                first_name = temp_applicant_data.get("first_name")
+                link_inscription = temp_applicant_data.get("link_inscription")
+
+                send_registration_email(first_name, email, link_inscription)
             return Response(
                 {"message": "Temporary Applicant created successfully"},
                 status=status.HTTP_201_CREATED,
@@ -483,9 +498,25 @@ class ApplicantListCreateAPIView(APIView):
 
 class ApplicantView(APIView):
     def get(self, request):
-        applicants = Applicant.objects.all()
-        serializer = ApplicantSerializer(applicants, many=True)
-        return Response(serializer.data)
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                applicants = Applicant.objects.all()
+                serializer = ApplicantSerializer(applicants, many=True)
+            elif request.user.is_staff:
+                formations_managed = FormationmanagementLink.objects.filter(
+                    manager=request.user
+                ).values_list("formation", flat=True)
+                applicants = Applicant.objects.filter(formation__in=formations_managed)
+                serializer = ApplicantSerializer(applicants, many=True)
+            else:
+                applicant = Applicant.objects.get(user=request.user)
+                serializer = ApplicantSerializer(applicant)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {"message": "User not authenticated"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
     def delete(self, request, pk):
         applicant = get_object_or_404(Applicant, pk=pk)
@@ -606,18 +637,34 @@ class MatchApplicantListCreateView(generics.ListCreateAPIView):
 
 
 class FormationView(APIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
-
     def get(self, request):
-        formations = Formation.objects.all()
-        serializer = FormationSerializer(formations, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                formations = Formation.objects.all()
+                serializer = FormationSerializer(formations, many=True)
+                return Response(serializer.data)
+            elif user.is_staff:
+                formations = FormationmanagementLink.objects.filter(
+                    manager=user
+                ).values_list("formation", flat=True)
+                formations = Formation.objects.filter(id__in=formations)
+                serializer = FormationSerializer(formations, many=True)
+                return Response(serializer.data)
+            else:
+                formation = Formation.objects.all()
+                serializer = FormationSerializer(formation, many=True)
+                return Response(serializer.data)
+        else:
+            return Response(
+                {"message": "User not authenticated"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
     def post(self, request):
-        formation_serializer = FormationSerializer(request.data)
-        if formation_serializer.is_valid:
-            formation_serializer.save
+        formation_serializer = FormationSerializer(data=request.data)
+        if formation_serializer.is_valid():
+            formation_serializer.save()
             return Response(
                 {"message": "Formation successfully added"},
                 status=status.HTTP_201_CREATED,
@@ -631,6 +678,89 @@ class FormationView(APIView):
         formation = get_object_or_404(Formation, pk=pk)
         formation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FormationStatisticsView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                formations = Formation.objects.all()
+            elif user.is_staff:
+                formations = FormationmanagementLink.objects.filter(
+                    manager=user
+                ).values_list("formation", flat=True)
+                formations = Formation.objects.filter(id__in=formations)
+
+            stats = []
+            for formation in formations:
+                applicants = Applicant.objects.filter(formation=formation)
+                print("Found ", len(applicants), " applicants for ", formation.name)
+
+                # Create a dictionary to store the most advanced status for each applicant
+                applicant_status = {}
+
+                for applicant in applicants:
+                    match_statuses = (
+                        match_applicant.objects.filter(application__applicant=applicant)
+                        .order_by(
+                            Case(
+                                When(status="Finalized_enrollment", then=1),
+                                When(status="Fully_accepted", then=2),
+                                When(status="Accepted_company", then=3),
+                                When(status="Pending", then=4),
+                                default=5,
+                            )
+                        )
+                        .values_list("status", flat=True)
+                    )
+
+                    if match_statuses:
+                        most_advanced_status = match_statuses[0]
+                        applicant_status[applicant.id] = most_advanced_status
+
+                # Count based on the most advanced status
+                pending_count = sum(
+                    1 for status in applicant_status.values() if status == "Pending"
+                )
+                accepted_by_company_count = sum(
+                    1
+                    for status in applicant_status.values()
+                    if status == "Accepted_company"
+                )
+                fully_accepted_count = sum(
+                    1
+                    for status in applicant_status.values()
+                    if status == "Fully_accepted"
+                )
+                finalized_enrollment_count = sum(
+                    1
+                    for status in applicant_status.values()
+                    if status == "Finalized_enrollment"
+                )
+
+                # Count applicants with no matches
+                no_matches_count = applicants.exclude(
+                    id__in=applicant_status.keys()
+                ).count()
+
+                stats.append(
+                    {
+                        "formation": formation.name,
+                        "total_applicants": len(applicants),
+                        "pending_matches": pending_count,
+                        "accepted_by_company": accepted_by_company_count,
+                        "fully_accepted": fully_accepted_count,
+                        "finalized_enrollment": finalized_enrollment_count,
+                        "no_matches": no_matches_count,  # Add this new stat
+                    }
+                )
+            return Response(stats, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"message": "User not authenticated"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
 
 class EducationalLevelChoicesView(APIView):
@@ -688,3 +818,110 @@ class LaunchMatchingView(APIView):
         return Response(
             {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
         )
+
+
+class StaffView(APIView):
+    def get(self, request):
+        user = CustomUser.objects.filter(is_staff=True)
+        serializer = UserSerializer(user, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        user = get_object_or_404(CustomUser, pk=pk)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request):
+        data = request.data
+        data["is_staff"] = True
+        serializer = UserSerializer(data=data)
+
+        if serializer.is_valid():
+            user = serializer.save()
+
+            # Generate password reset token
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            # Send the UID and token to the React frontend
+            link_inscription = (
+                f"{settings.DOMAIN}/reset-password?uid={uid}&token={token}"
+            )
+
+            # Send registration email with the link (pointing to your React app)
+            send_registration_email_staff(
+                data["first_name"], data["email"], link_inscription
+            )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FormationLinkView(APIView):
+    def get(self, request):
+        formation_links = FormationmanagementLink.objects.all()
+        serializer = FormationmanagementLinkSerializer(formation_links, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = FormationmanagementLinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        formation_link = get_object_or_404(FormationmanagementLink, pk=pk)
+        formation_link.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RecontactTempApplicantView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+        temp_applicant = get_object_or_404(TempApplicant, pk=pk)
+        send_registration_email(
+            temp_applicant.first_name,
+            temp_applicant.email,
+            temp_applicant.link_inscription,
+        )
+        return Response(
+            {"message": "Email sent to temp applicant"},
+            status=status.HTTP_200_OK,
+        )
+
+
+from django.contrib.auth import get_user_model
+
+
+class PasswordReset(APIView):
+    def post(self, request):
+        uid = request.data.get("uid")
+        token = request.data.get("token")
+        new_password = request.data.get("new_password")
+
+        try:
+            uid = urlsafe_base64_decode(uid).decode()
+            user = get_user_model().objects.get(pk=uid)
+
+            # Verify the token
+            token_generator = PasswordResetTokenGenerator()
+            if token_generator.check_token(user, token):
+                user.set_password(new_password)
+                user.save()
+                return Response(
+                    {"message": "Password reset successful"}, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            return Response(
+                {"error": "Invalid uid"}, status=status.HTTP_400_BAD_REQUEST
+            )

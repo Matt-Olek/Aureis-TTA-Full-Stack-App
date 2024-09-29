@@ -1,13 +1,16 @@
 from django.urls import path
 from .views import (
+    StaffView,
     ApplicantSearchView,
     SectorView,
     ApplicantView,
     TempApplicantView,
+    RecontactTempApplicantView,
     FullApplicantCreateView,
     CompanyListCreateAPIView,
     MatchApplicantListCreateView,
     FormationView,
+    FormationLinkView,
     EducationalLevelChoicesView,
     TempApplicantView,
     TempCompanyView,
@@ -20,6 +23,8 @@ from .views import (
     ApplicationTestMetadataView,
     JobOfferListCreateView,
     LaunchMatchingView,
+    PasswordReset,
+    FormationStatisticsView,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -28,8 +33,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 urlpatterns = [
     ### User & Tokens
     path("user/", UserDetailView.as_view(), name="user_detail"),
+    path("staff/", StaffView.as_view(), name="staff"),
+    path("staff/<int:pk>/", StaffView.as_view(), name="staff"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "password-reset/",
+        PasswordReset.as_view(),
+        name="password_reset",
+    ),
     ### Model Views
     #
     # Applicants
@@ -38,10 +50,24 @@ urlpatterns = [
     # Temp Applicants
     path("temp-applicants/", TempApplicantView.as_view(), name="temp-applicant"),
     path(
+        "temp-applicants/<int:pk>/recontact/",
+        RecontactTempApplicantView.as_view(),
+        name="recontact-temp-applicant",
+    ),
+    path(
         "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
     ),
     path("temp-companies/<token>/", TempCompanyView.as_view(), name="temp-company"),
     #
+    path("formations/", FormationView.as_view(), name="formation-list-create"),
+    path("formations/<int:pk>/", FormationView.as_view(), name="formation-delete"),
+    path("formationlink/", FormationLinkView.as_view(), name="formation-link"),
+    path("formationlink/<int:pk>/", FormationLinkView.as_view(), name="formation-link"),
+    path(
+        "formation-statistics/",
+        FormationStatisticsView.as_view(),
+        name="formation-statistics",
+    ),
     #
     #
     #
@@ -61,8 +87,6 @@ urlpatterns = [
     path(
         "search/applicant/", ApplicantSearchView.as_view(), name="applicant-list-create"
     ),
-    path("formations/", FormationView.as_view(), name="formation-list-create"),
-    path("formations/<int:pk>/", FormationView.as_view(), name="formation-delete"),
     path(
         "educational-level-choices/",
         EducationalLevelChoicesView.as_view(),

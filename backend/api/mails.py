@@ -3,14 +3,6 @@ from django.conf import settings
 
 
 def send_registration_email(first_name, email, link_inscription):
-    """
-    Sends a registration email to a temporary applicant.
-
-    Parameters:
-        first_name (str): The first name of the applicant.
-        email (str): The email address of the applicant.
-        link_inscription (str): The registration link for the applicant.
-    """
     subject = "Votre inscription sur TrouveTonalternance.com - Aureis"
     message = (
         f"Bonjour {first_name},\n\n"
@@ -19,7 +11,7 @@ def send_registration_email(first_name, email, link_inscription):
         f"Veuillez compléter votre inscription en cliquant sur le lien ci-dessous:\n"
         f"{link_inscription}\n\n"
         "À très bientôt !\n"
-        "L’équipe TrouveTonalternance.com"
+        "L’équipe d'Aureis Formation"
     )
     from_email = settings.DEFAULT_FROM_EMAIL
 
@@ -28,22 +20,30 @@ def send_registration_email(first_name, email, link_inscription):
 
 
 def send_registration_email_company(name, email, link_inscription):
-    """
-    Sends a registration email to a temporary company.
-
-    Parameters:
-        name (str): The name of the company.
-        email (str): The email address of the company.
-        link_inscription (str): The registration link for the company.
-    """
-    subject = "Votre inscription sur TrouveTonalternance.com - Aureis"
+    subject = "Votre recherche d'alternant - Aureis Formation"
     message = (
         f"Bonjour,\n\n"
         f"Merci de nous avoir confié votre besoin en recrutement d’alternants. Pour vous aider à trouver les candidats qui correspondent le plus à vos attentes, nous vous invitons à utiliser notre système de Matching affinitaire."
         f"Il vous suffit de finaliser votre profil (6 minutes seulement) sur notre plateforme, et vous recevrez instantanément les profils.\n\n"
         f"{link_inscription}\n\n"
         "À très bientôt !\n"
-        "L’équipe TrouveTonalternance.com"
+        "L’équipe d'Aureis Formation"
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    # Send the email
+    send_mail(subject, message, from_email, [email])
+
+
+def send_registration_email_staff(name, email, link_inscription):
+    subject = "Votre inscription sur TrouveTonalternance.com - Aureis"
+    message = (
+        f"Bonjour {name},\n\n"
+        f"Vous avez été invité à rejoindre notre plateforme de Matching affinitaire pour aider nos alternants à trouver leur entreprise d’accueil.\n\n"
+        f"Il vous suffit de définir votre nouveau mot de passe en cliquant sur le lien ci-dessous:\n"
+        f"{link_inscription}\n\n"
+        "À très bientôt !\n"
+        "L’équipe d'Aureis Formation"
     )
     from_email = settings.DEFAULT_FROM_EMAIL
 

@@ -146,7 +146,7 @@ const CompanyManagement: React.FC = () => {
         <img
           src="/media/images/astronaute.svg"
           className="h-20 mb-5 fade-in"
-          alt="Icon"
+          alt="Entreprises"
         />
       </div>
       <div className="flex items-center justify-center space-x-4 my-5">

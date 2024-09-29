@@ -139,6 +139,18 @@ class Formation(models.Model):
         return self.name + " - " + self.level
 
 
+class FormationmanagementLink(models.Model):
+    formation = models.ForeignKey(Formation, on_delete=models.CASCADE)
+    manager = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # Unique together
+    class Meta:
+        unique_together = ["formation", "manager"]
+
+    def __str__(self):
+        return self.formation.name + " - " + self.manager.email
+
+
 # ------------------------------- Companies ------------------------------- #
 
 

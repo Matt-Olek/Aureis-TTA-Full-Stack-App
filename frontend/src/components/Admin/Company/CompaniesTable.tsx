@@ -8,18 +8,18 @@ interface CompaniesTableProps {
 }
 
 const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
-  <div className="">
-    <table className="table w-full">
-      <thead>
+  <div className="overflow-x-scroll w-full mt-10 h-96">
+    <table className="table w-full table-zebra">
+      <thead className="relative sticky top-0 z-10 bg-base-100">
         <tr>
           <th>Nom de l&apos;entreprise</th>
           <th>Email</th>
           <th>Secteur</th>
           <th>Code APE</th>
-          <th>Adresse</th>
+          {/* <th>Adresse</th> */}
           <th>Ville</th>
-          <th>Code postal</th>
-          <th>Pays</th>
+          {/* <th>Code postal</th> */}
+          {/* <th>Pays</th> */}
           <th>Statut</th>
           <th>Actions</th>
         </tr>
@@ -31,10 +31,10 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
             <td>{company.email}</td>
             <td>{company.sector}</td>
             <td>{company.codeAPE}</td>
-            <td>{company.address}</td>
+            {/* <td>{company.address}</td> */}
             <td>{company.city}</td>
-            <td>{company.zip_code}</td>
-            <td>{company.country}</td>
+            {/* <td>{company.zip_code}</td> */}
+            {/* <td>{company.country}</td> */}
             <td>
               {company.link_inscription ? (
                 <span className="badge bg-blue-300 text-blue-900 p-3">
