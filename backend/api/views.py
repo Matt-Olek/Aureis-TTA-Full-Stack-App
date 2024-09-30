@@ -4,7 +4,6 @@ from api.serializers import (
     CodeAPESerializer,
     CompanySerializer,
     JobOfferSerializer,
-    OfferTokenSerializer,
     ApplicantSerializer,
     ApplicationSerializer,
     Application_testSerializer,
@@ -21,7 +20,6 @@ from matching.models import (
     CodeAPE,
     Company,
     JobOffer,
-    OfferToken,
     Applicant,
     Application,
     match_applicant,
@@ -93,22 +91,56 @@ class CodeAPEView(APIView):
 
 class CompanyView(APIView):
     def get(self, request):
-        companies = Company.objects.all()
-        serializer = CompanySerializer(companies, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                companies = Company.objects.all()
+                serializer = CompanySerializer(companies, many=True)
+                return Response(serializer.data)
+            elif user.is_staff:
+                company = company_user_link.objects.get(user=user).company
+                serializer = CompanySerializer(company)
+                return Response(serializer.data)
+            else:
+                company = company_user_link.objects.get(user=user).company
+                serializer = CompanySerializer(company)
+                return Response(serializer.data)
+        else:
+            return Response(
+                {"message": "User not authenticated"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+    def post(self, request):
+        data = request.data
+        user = request.user
+        if user.is_authenticated:
+            try:
+                link = company_user_link.objects.get(user=user)
+                company = link.company
+                company_serializer = CompanySerializer(company, data=data)
+                if company_serializer.is_valid():
+                    company_serializer.save()
+                    return Response(
+                        company_serializer.data, status=status.HTTP_201_CREATED
+                    )
+                else:
+                    print(company_serializer.errors)
+                    return Response(
+                        company_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                    )
+            except Exception as e:
+                print(e)
+                return Response(
+                    {"message": "Company does not exist"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
 
 class JobOfferView(APIView):
     def get(self, request):
         job_offers = JobOffer.objects.all()
         serializer = JobOfferSerializer(job_offers, many=True)
-        return Response(serializer.data)
-
-
-class OfferTokenView(APIView):
-    def get(self, request):
-        offer_tokens = OfferToken.objects.all()
-        serializer = OfferTokenSerializer(offer_tokens, many=True)
         return Response(serializer.data)
 
 
@@ -167,6 +199,20 @@ class ApplicationTestMetadataView(APIView):
 
     def get(self, request):
         serializer = Application_testSerializer()
+        metadata = serializer.get_field_metadata()
+        return Response(metadata, status=status.HTTP_200_OK)
+
+
+class CompanyTestMetadataView(APIView):
+    """
+    API endpoint that provides metadata for the Offer_test model fields.
+    """
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        serializer = Offer_testSerializer()
         metadata = serializer.get_field_metadata()
         return Response(metadata, status=status.HTTP_200_OK)
 
@@ -250,6 +296,44 @@ class ApplicationTestDetailView(APIView):
             )
 
 
+class CompanyTestDetailView(APIView):
+    """
+    API endpoint that retrieves, updates, or deletes an Offer_test instance.
+    """
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def put(self, request, token):
+        try:
+            offer = JobOffer.objects.get(token=token)
+            try:
+                offer_test, created = Offer_test.objects.get_or_create(offer=offer)
+            except Offer_test.DoesNotExist:
+                offer_test = Offer_test(offer=offer)
+            print(request.data)
+            data = request.data
+            data["offer"] = offer.id
+            serializer = Offer_testSerializer(offer_test, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                offer.is_active = True
+                offer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except JobOffer.DoesNotExist:
+            return Response(
+                {"message": "Job offer does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 class ApplicantFilter(filters.FilterSet):
     class Meta:
         model = Applicant
@@ -300,7 +384,7 @@ class ApplicantInfo(APIView):
         except:
             pass
         try:
-            applicant_matches = match_applicant.objects.filter(applicant=applicant)
+            applicant_matches = match_applicant.objects.filter(application=application)
             applicant_matches = True
         except:
             pass
@@ -701,48 +785,35 @@ class FormationStatisticsView(APIView):
                 applicant_status = {}
 
                 for applicant in applicants:
-                    match_statuses = (
-                        match_applicant.objects.filter(application__applicant=applicant)
-                        .order_by(
-                            Case(
-                                When(status="Finalized_enrollment", then=1),
-                                When(status="Fully_accepted", then=2),
-                                When(status="Accepted_company", then=3),
-                                When(status="Pending", then=4),
-                                default=5,
-                            )
-                        )
-                        .values_list("status", flat=True)
+                    matches = match_applicant.objects.filter(
+                        application__applicant=applicant
                     )
+                    match_statuses = matches.values_list("status", flat=True)
 
                     if match_statuses:
-                        most_advanced_status = match_statuses[0]
+                        most_advanced_status = max(match_statuses)
                         applicant_status[applicant.id] = most_advanced_status
+                    else:
+                        applicant_status[applicant.id] = -10
 
                 # Count based on the most advanced status
-                pending_count = sum(
-                    1 for status in applicant_status.values() if status == "Pending"
+                pending_count = len(
+                    [status for status in applicant_status.values() if status == 0]
                 )
-                accepted_by_company_count = sum(
-                    1
-                    for status in applicant_status.values()
-                    if status == "Accepted_company"
+                accepted_by_company_count = len(
+                    [status for status in applicant_status.values() if status == 1]
                 )
-                fully_accepted_count = sum(
-                    1
-                    for status in applicant_status.values()
-                    if status == "Fully_accepted"
+                fully_accepted_count = len(
+                    [status for status in applicant_status.values() if status == 3]
                 )
-                finalized_enrollment_count = sum(
-                    1
-                    for status in applicant_status.values()
-                    if status == "Finalized_enrollment"
+                finalized_enrollment_count = len(
+                    [status for status in applicant_status.values() if status == 4]
                 )
 
                 # Count applicants with no matches
-                no_matches_count = applicants.exclude(
-                    id__in=applicant_status.keys()
-                ).count()
+                no_matches_count = len(
+                    [status for status in applicant_status.values() if status == -10]
+                )
 
                 stats.append(
                     {
@@ -924,4 +995,81 @@ class PasswordReset(APIView):
         except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
             return Response(
                 {"error": "Invalid uid"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class MatchesView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+                matches = match_applicant.objects.all()
+                serializer = MatchApplicantSerializer(matches, many=True)
+                return Response(serializer.data)
+            elif user.is_staff:
+                formations_managed = FormationmanagementLink.objects.filter(
+                    manager=user
+                ).values_list("formation", flat=True)
+                matches = match_applicant.objects.filter(
+                    application__applicant__formation__in=formations_managed
+                )
+                serializer = MatchApplicantSerializer(matches, many=True)
+                return Response(serializer.data)
+            elif user.type == "C":
+                company = company_user_link.objects.get(user=user).company
+                matches = match_applicant.objects.filter(offer__company=company)
+                serializer = MatchApplicantSerializer(matches, many=True)
+                return Response(serializer.data)
+            elif user.type == "A":
+                matches = match_applicant.objects.filter(
+                    application__applicant__user=user
+                )
+                serializer = MatchApplicantSerializer(matches, many=True)
+                return Response(serializer.data)
+            else:
+                return Response(
+                    {"message": "User not authorized"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+        else:
+            return Response(
+                {"message": "User not authenticated"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+    def post(self, request, pk):
+        action = request.data.get("action")
+        match = get_object_or_404(match_applicant, pk=pk)
+        user = request.user
+        if (
+            user.is_staff
+            or user.is_superuser
+            or match.application.applicant.user == user
+            or company_user_link.objects.get(user=user).company == match.offer.company
+        ):
+            # Check if the action is valid (int, between -2 and 4)
+            try:
+                action = int(action)
+                print(action)
+                if action in range(-2, 5):
+                    match.status = action
+                    match.save()
+                    return Response(
+                        {"message": "Match updated successfully"},
+                        status=status.HTTP_200_OK,
+                    )
+                else:
+                    return Response(
+                        {"message": "Action not recognized"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            except:
+                return Response(
+                    {"message": "Action not recognized"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        else:
+            return Response(
+                {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
             )

@@ -1,32 +1,24 @@
 import { useState, useEffect } from "react";
 import Axios from "../utils/Axios";
-
-// Define interfaces for data types
-interface Formation {
-  id: string;
-  name: string;
-}
-
-interface Match {
-  offer: string;
-  application: string;
-  score: number;
-  industry_score: number;
-  test_score: number;
-  geographic_score: number;
-  resume_score: number;
-  status: string;
-  created_at: string;
-}
+import { Match, Formation, STATUS_MAP } from "../types";
+import MatchInfo from "./MatchInfo"; // Import the MatchInfo component
 
 const OfferManagement: React.FC = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
   const [groupBy, setGroupBy] = useState<string>("offer");
-  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const [expandedAccordion, setExpandedAccordion] = useState<number | null>(
+    null
+  );
+
+  const handleAccordionToggle = (index: number) => {
+    setExpandedAccordion((prevExpanded) =>
+      prevExpanded === index ? null : index
+    );
+  };
 
   // Filter states
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<number | string>("");
   const [offerFilter, setOfferFilter] = useState<string>("");
   const [companyFilter, setCompanyFilter] = useState<string>("");
 
@@ -101,7 +93,12 @@ const OfferManagement: React.FC = () => {
 
   const groupedMatches = filteredMatches.reduce(
     (acc: Record<string, Match[]>, match) => {
-      const key = groupBy === "offer" ? match.offer : match.application;
+      const key =
+        groupBy === "offer"
+          ? match.offer.title
+          : match.application.applicant.first_name +
+            " " +
+            match.application.applicant.last_name;
       if (!acc[key]) {
         acc[key] = [];
       }
@@ -111,35 +108,28 @@ const OfferManagement: React.FC = () => {
     {}
   );
 
-  const toggleItem = (key: string) => {
-    setOpenItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
   return (
     <>
       <style>
         {`
-        body {
-            background-image: none !important;
-        }
-          .group-card-content {
-            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
-            overflow: hidden;
-          }
+    body {
+        background-image: none !important;
+    }
+      .group-card-content {
+        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+        overflow: hidden;
+      }
 
-          .group-card-content.collapsed {
-            max-height: 0;
-            opacity: 0;
-          }
+      .group-card-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+      }
 
-          .group-card-content.expanded {
-            max-height: 1000px;
-            opacity: 1;
-          }
-        `}
+      .group-card-content.expanded {
+        max-height: 1000px;
+        opacity: 1;
+      }
+    `}
       </style>
 
       <div className="p-6 flex w-full h-full">
@@ -279,71 +269,44 @@ const OfferManagement: React.FC = () => {
             <p className="text-gray-600">Aucune correspondance trouvée.</p>
           ) : (
             Object.keys(groupedMatches).map((key, index) => (
-              <div key={index} className="group-card mb-2">
-                <button
-                  className="group-card-header text-xl font-semibold text-white p-4 rounded-t-md w-full text-left transition duration-300 ease-in-out bg-base-200 hover:border hover:border-primary focus:outline-none"
-                  onClick={() => toggleItem(key)}
-                >
-                  {groupBy === "offer"
-                    ? `Besoin : ${key}`
-                    : `Candidat : ${key}`}
-                </button>
+              <div
+                key={index}
+                className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box mb-2"
+              >
+                <input
+                  type="radio"
+                  name="group-accordion"
+                  checked={expandedAccordion === index}
+                  onChange={() => handleAccordionToggle(index)}
+                  className="peer"
+                />
+                <div className="collapse-title text-xl font-medium flex justify-between items-center">
+                  <span>{key} </span>
+                </div>
+                {/* Conditionally render MatchInfo only if expanded */}
                 <div
-                  className={`group-card-content text-white rounded-b-md p-2 bg-base-100 ${
-                    openItems[key] ? "expanded" : "collapsed"
+                  className={`collapse-content ${
+                    expandedAccordion === index ? "expanded" : "collapsed"
                   }`}
                 >
-                  {groupedMatches[key].map((match, matchIndex) => (
-                    <div
-                      key={matchIndex}
-                      className="match-card p-4 mb-3 bg-stone-900 rounded-md shadow-md"
-                    >
-                      {groupBy === "offer" ? (
-                        <p className="mb-2">
-                          <span className="font-semibold"></span>{" "}
-                          {match.application}
-                        </p>
-                      ) : (
-                        <p className="mb-2">
-                          <span className="font-semibold"></span> {match.offer}
-                        </p>
-                      )}
-                      <p>
-                        <span className="font-semibold">Score total :</span>{" "}
-                        {match.score} %
-                      </p>
-                      <div className="flex space-x-4 my-3">
-                        <div className="relative">
-                          <span className="bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-semibold">
-                            Industrie {match.industry_score} %
+                  {expandedAccordion === index &&
+                    groupedMatches[key].map((match, matchIndex) => (
+                      <>
+                        <div className="flex justify-center mb-2 text-primary">
+                          <span className="text-lg font-semibold text-center border border-primary rounded-md px-2">
+                            {" "}
+                            {STATUS_MAP[match.status]}{" "}
                           </span>
                         </div>
-                        <div className="relative">
-                          <span className="bg-green-500 text-white rounded-full px-3 py-1 text-sm font-semibold">
-                            Test {match.test_score} %
-                          </span>
-                        </div>
-                        <div className="relative">
-                          <span className="bg-red-500 text-white rounded-full px-3 py-1 text-sm font-semibold">
-                            Géographie {match.geographic_score} %
-                          </span>
-                        </div>
-                        <div className="relative">
-                          <span className="bg-yellow-500 text-white rounded-full px-3 py-1 text-sm font-semibold">
-                            CV {match.resume_score} %
-                          </span>
-                        </div>
-                      </div>
-                      <p className="mb-2">
-                        <span className="font-semibold">Statut :</span>{" "}
-                        {match.status}
-                      </p>
-                      <p className="mb-2">
-                        <span className="font-semibold">Match initié le :</span>{" "}
-                        {new Date(match.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
+                        <MatchInfo
+                          key={matchIndex}
+                          match={match}
+                          type={groupBy === "offer" ? "company" : "applicant"}
+                          adminView={true}
+                        />
+                        <hr className="border-primary my-4" />
+                      </>
+                    ))}
                 </div>
               </div>
             ))

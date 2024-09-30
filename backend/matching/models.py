@@ -238,21 +238,16 @@ class JobOffer(models.Model):
     description = models.TextField(default="")
     skills = models.ManyToManyField(Skill, null=True, blank=True)
     is_active = models.BooleanField(default=False)
+    token = models.CharField(max_length=20, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.company.name + " - " + self.title
 
-
-class OfferToken(models.Model):
-    offer = models.OneToOneField(JobOffer, on_delete=models.CASCADE)
-    token = models.CharField(max_length=20, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
     def save(self, *args, **kwargs):
         if not self.token:
-            self.token = self.generate_token()
-        return super().save(*args, **kwargs)
+            self.token = generate_token()
+        super().save(*args, **kwargs)
 
     def generate_token(self):
         return get_random_string(length=20)
@@ -392,13 +387,13 @@ class Application(models.Model):
 
 class match_applicant(models.Model):
     STATUS_CHOICES = [
-        ("Pending", "Pending"),
-        ("Accepted_company", "Accepted_company"),
-        ("Queue_company", "Queue_company"),
-        ("Canceled_company", "Canceled_conmapy"),
-        ("Canceled_applicant", "Canceled_applicant"),
-        ("Fully_accepted", "Fully_accepted"),
-        ("Finalized_enrollment", "Finalized_enrollment"),
+        (0, "En attente"),
+        (1, "Accepté par l'entreprise"),
+        (2, "En file d'attente par l'entreprise"),
+        (-1, "Annulé par l'entreprise"),
+        (-2, "Annulé par le candidat"),
+        (3, "Entièrement accepté"),
+        (4, "Inscription finalisée"),
     ]
     offer = models.ForeignKey(JobOffer, on_delete=models.CASCADE)
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
@@ -407,7 +402,7 @@ class match_applicant(models.Model):
     test_score = models.IntegerField(default=0)
     geographic_score = models.IntegerField(default=0)
     resume_score = models.IntegerField(default=0)
-    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default="Pending")
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)  # Changement ici
     created_at = models.DateTimeField(auto_now_add=True)
 
 

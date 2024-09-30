@@ -19,6 +19,10 @@ import Offers from "./components/Company/Offers";
 import ManagerManagement from "./components/Admin/ManagerManagement";
 import ResetPassword from "./components/ResetPassword";
 import FormationStatistics from "./components/Admin/FormationStatistics";
+import ApplicantMatches from "./components/Applicant/ApplicantMatches";
+import CompanyTest from "./components/Company/CompanyTest";
+import CompanyMatches from "./components/Company/CompanyMatches";
+import CompanyPage from "./components/Company/CompanyPage";
 
 function App() {
   return (
@@ -39,7 +43,19 @@ function App() {
           />
           <Route path="/applicant/application" element={<ApplicantPage />} />
           <Route path="/applicant/test" element={<ApplicantTest />} />
+          <Route path="/applicant/matches" element={<ApplicantMatches />} />
+          <Route path="/company/matches" element={<CompanyMatches />} />
           <Route path="/company/offers" element={<Offers />} />
+          <Route path="/company/page" element={<CompanyPage />} />
+          <Route path="/test/:token" element={<CompanyTest />} />
+          <Route
+            path="/thanks-test"
+            element={
+              <div className="w-1/2 bg-base-200 p-4 justify-center items-center flex flex-col mx-auto mt-10">
+                <p>Test soumis avec succès ✅</p>
+              </div>
+            }
+          />
 
           <Route path="/" element={<AuthLayout />}>
             <Route path="/" element={<Home />} />

@@ -7,7 +7,6 @@ from matching.models import (
     Company,
     JobOffer,
     Offer_test,
-    OfferToken,
     Sector,
     Skill,
     TempApplicant,
@@ -26,7 +25,6 @@ admin.site.register(CodeAPE)
 admin.site.register(Company)
 admin.site.register(JobOffer)
 admin.site.register(Offer_test)
-admin.site.register(OfferToken)
 admin.site.register(Sector)
 admin.site.register(Skill)
 admin.site.register(TempApplicant)

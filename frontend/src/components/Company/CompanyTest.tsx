@@ -1,9 +1,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // Import useParams
 import Axios from "../../utils/Axios";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
-// Define types for metadata and form data
 interface FieldInfo {
   label: string;
   choices?: { [key: string]: string };
@@ -13,17 +12,19 @@ interface FormData {
   [key: string]: string;
 }
 
-const ApplicationTest = () => {
+const CompanyTest = () => {
   const [formData, setFormData] = useState<FormData>({});
   const [fieldMetadata, setFieldMetadata] = useState<{
     [key: string]: FieldInfo;
   }>({});
+  const { token } = useParams<{ token: string }>(); // Extract token from the URL
   const navigate = useNavigate();
   const { user } = useAuth();
+  console.log("Token:", token); // Debugging output
 
   useEffect(() => {
     // Fetch field metadata
-    Axios.get("applicant_test/metadata/")
+    Axios.get("company_test/metadata/")
       .then((response) => {
         const metadata = response.data as { [key: string]: FieldInfo };
         console.log("Fetched metadata:", metadata); // Debugging output
@@ -35,13 +36,6 @@ const ApplicationTest = () => {
         setFormData(initialData);
       })
       .catch((error) => console.error("Error fetching metadata:", error));
-
-    // Fetch existing applicant data
-    Axios.get("applicant_test/")
-      .then((response) => {
-        setFormData(response.data as FormData);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
   }, [user]);
 
   const handleChange = (
@@ -53,21 +47,18 @@ const ApplicationTest = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    Axios.put("applicant_test/", formData)
+    Axios.put(`company_test/${token}/`, formData) // Use the token in the API call
       .then((response) => {
         console.log("Updated successfully:", response.data);
-        navigate("/#home"); // Redirect to home page after successful update
+        navigate("/thanks-test"); // Redirect to home page after successful update
       })
       .catch((error) => console.error("Error updating data:", error));
   };
 
   const renderField = (fieldName: string, fieldInfo: FieldInfo) => {
-    const choices = fieldInfo.choices
-      ? Object.entries(fieldInfo.choices) // Convert the choices object to an array of [value, label]
-      : [];
+    const choices = fieldInfo.choices ? Object.entries(fieldInfo.choices) : [];
 
     if (choices.length > 0) {
-      // Render a select field for choices
       return (
         <div key={fieldName} className="relative">
           <label className="label">{fieldInfo.label}:</label>
@@ -94,7 +85,6 @@ const ApplicationTest = () => {
       );
     }
 
-    // Render a text input for other fields
     return (
       <div key={fieldName}>
         <label>{fieldInfo.label}:</label>
@@ -112,10 +102,13 @@ const ApplicationTest = () => {
     <div className="w-full flex justify-center mt-10">
       <div className="lg:w-1/2 w-full bg-base-200 p-5 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mt-6 text-center text-white lily">
-          <span className="text-primary ">Test</span> de personnalité
+          <span className="text-primary">Test</span> de personnalité
         </h1>
         <hr className="border-primary my-4" />
-        <p className="text-center text-white manrope">En moins de 2 minutes</p>
+        <p className="text-center text-white manrope">
+          Vous avez été invité à remplir ce test afin de mieux cerner le profil
+          de l'alternant que vous recherchez.
+        </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           {Object.entries(fieldMetadata).map(([fieldName, fieldInfo]) =>
             renderField(fieldName, fieldInfo)
@@ -129,4 +122,4 @@ const ApplicationTest = () => {
   );
 };
 
-export default ApplicationTest;
+export default CompanyTest;

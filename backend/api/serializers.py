@@ -3,7 +3,6 @@ from matching.models import (
     CodeAPE,
     Company,
     JobOffer,
-    OfferToken,
     Applicant,
     Application,
     match_applicant,
@@ -34,6 +33,12 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
+class FormationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Formation
+        fields = "__all__"
+
+
 class CodeAPESerializer(serializers.ModelSerializer):
     class Meta:
         model = CodeAPE
@@ -52,22 +57,18 @@ class JobOfferSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OfferTokenSerializer(serializers.ModelSerializer):
+class SectorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OfferToken
+        model = Sector
         fields = "__all__"
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
-    sector = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Sector.objects.all()
-    )
+    sector = SectorSerializer(many=True, required=False)
     skills = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Skill.objects.all(), required=False
     )
-    formation = serializers.PrimaryKeyRelatedField(
-        many=False, queryset=Formation.objects.all(), required=True
-    )
+    formation = FormationSerializer()
 
     class Meta:
         model = Applicant
@@ -75,14 +76,10 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
+    applicant = ApplicantSerializer()
+
     class Meta:
         model = Application
-        fields = "__all__"
-
-
-class SectorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sector
         fields = "__all__"
 
 
@@ -106,7 +103,18 @@ class Application_testSerializer(serializers.ModelSerializer):
 class Offer_testSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer_test
-        fields = "__all__"
+        exclude = ["offer", "id"]
+
+    def get_field_metadata(self):
+        field_metadata = {}
+        for field_name, field in self.fields.items():
+            field_metadata[field_name] = {
+                "type": field.__class__.__name__,
+                "choices": field.choices if hasattr(field, "choices") else None,
+                "label": field.label,
+                "required": field.required,
+            }
+        return field_metadata
 
 
 class TempApplicantSerializer(serializers.ModelSerializer):
@@ -132,17 +140,11 @@ class TempCompanySerializer(serializers.ModelSerializer):
 
 
 class MatchApplicantSerializer(serializers.ModelSerializer):
-    offer = serializers.StringRelatedField()
-    application = serializers.StringRelatedField()
+    offer = JobOfferSerializer()
+    application = ApplicationSerializer()
 
     class Meta:
         model = match_applicant
-        fields = "__all__"
-
-
-class FormationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Formation
         fields = "__all__"
 
 

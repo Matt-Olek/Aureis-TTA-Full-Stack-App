@@ -5,12 +5,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import "daisyui/dist/full.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
-
-interface Formation {
-  id: number;
-  name: string;
-}
-
 interface FormationStatistics {
   formation: string;
   total_applicants: number;
@@ -22,25 +16,22 @@ interface FormationStatistics {
 }
 
 const FormationStatistics: React.FC = () => {
-  const [formations, setFormations] = useState<Formation[]>([]);
   const [formationStatisticsList, setFormationStatisticsList] = useState<
     FormationStatistics[]
   >([]);
 
   useEffect(() => {
-    fetchFormations();
     fetchFormationStatistics();
   }, []);
 
-  const fetchFormations = async () => {
+  const launchMatching = async () => {
     try {
-      const response = await Axios.get<Formation[]>("/formations/");
-      setFormations(response.data);
+      await Axios.post("/launch_matching/");
+      fetchFormationStatistics();
     } catch (err) {
       console.error(err);
     }
   };
-
   const fetchFormationStatistics = async () => {
     try {
       const response = await Axios.get<FormationStatistics[]>(
@@ -93,6 +84,9 @@ const FormationStatistics: React.FC = () => {
       </style>
       <div className="flex items-center justify-center mt-10">
         <div className="container mx-auto">
+          <button className="btn btn-primary" onClick={launchMatching}>
+            Relancer le matching
+          </button>
           <h1 className="text-3xl font-bold mb-6 text-center">
             Statistiques des formations
           </h1>

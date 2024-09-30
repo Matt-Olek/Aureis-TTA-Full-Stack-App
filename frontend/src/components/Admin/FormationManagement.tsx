@@ -1,13 +1,6 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import Axios from "../../utils/Axios";
-
-// Define types for formations and level choices
-interface Formation {
-  id: number;
-  name: string;
-  level: string;
-}
-
+import { Formation } from "../../types";
 interface LevelChoice {
   [key: string]: string;
 }

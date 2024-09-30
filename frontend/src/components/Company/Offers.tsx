@@ -1,17 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import Axios from "../../utils/Axios";
-
-interface Offer {
-  id?: number;
-  title: string;
-  same_entity_location: boolean;
-  location: string;
-  contract_type: string;
-  target_educational_level: string;
-  description: string;
-  skills: string[];
-  created_at?: string;
-}
+import { Offer } from "../../types";
 
 const Offers: React.FC = () => {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -27,6 +16,8 @@ const Offers: React.FC = () => {
     target_educational_level: "",
     description: "",
     skills: [],
+    is_active: false,
+    token: "",
   });
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
 
@@ -68,6 +59,8 @@ const Offers: React.FC = () => {
           target_educational_level: "",
           description: "",
           skills: [],
+          is_active: false,
+          token: "",
         }); // Reset form fields
       })
       .catch((error) => {
@@ -145,8 +138,21 @@ const Offers: React.FC = () => {
                   id={`offer-${offer?.id}`}
                 />
                 <div className="collapse-title text-xl font-medium">
-                  <div className="flex justify-between">
-                    <span>{offer.title}</span>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span>{offer.title}</span>
+                      {!offer.is_active ? (
+                        <span className="relative flex h-3 w-3 ml-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                      ) : (
+                        <span className="relative flex h-3 w-3 ml-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                      )}
+                    </div>
                     <span>{offer.created_at?.substring(0, 10)}</span>
                   </div>
                 </div>
@@ -168,6 +174,26 @@ const Offers: React.FC = () => {
                     <strong>Compétences :</strong> {offer.skills.join(", ")}
                   </p>
                   <div className="flex justify-end mt-2">
+                    {!offer.is_active && (
+                      <button
+                        className="btn btn-primary btn-sm mr-2 relative"
+                        onClick={() => {
+                          const testUrl =
+                            import.meta.env.VITE_DOMAIN + "test/" + offer.token;
+                          navigator.clipboard.writeText(testUrl);
+                          alert(
+                            "Le lien du test de personnalité a été copié dans le presse-papier."
+                          );
+                        }}
+                      >
+                        <span className="relative flex h-3 w-3 ml-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                        Partager le test de personnalité
+                      </button>
+                    )}
+
                     <button
                       className="btn btn-warning btn-sm mr-2"
                       onClick={() => {

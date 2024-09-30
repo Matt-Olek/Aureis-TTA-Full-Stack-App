@@ -79,28 +79,40 @@ const HomeModules: React.FC = () => {
       <div className="flex flex-col items-center justify-center mt-5">
         <div className="join">
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-primary btn-outline join-item"
             onClick={() => navigate("/admin/applicant-management")}
           >
             Candidats
           </button>
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-secondary btn-outline join-item"
             onClick={() => navigate("/admin/company-management")}
           >
             Entreprises
           </button>
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-primary btn-outline join-item"
             onClick={() => navigate("/admin/offer-management")}
           >
             Matching
           </button>
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-secondary btn-outline join-item"
             onClick={() => navigate("/admin/formation-management")}
           >
             Formations
+          </button>
+          <button
+            className="btn btn-primary btn-outline join-item"
+            onClick={() => navigate("/admin/manager-management")}
+          >
+            Gestionnaires
+          </button>
+          <button
+            className="btn btn-secondary btn-outline join-item"
+            onClick={() => navigate("/admin/formation-statistics")}
+          >
+            Statistiques
           </button>
         </div>
       </div>
@@ -229,7 +241,7 @@ const HomeModules: React.FC = () => {
                     ? "btn-primary"
                     : "btn-outline"
                 } join-item`}
-                onClick={() => navigate("/admin/offer-management")}
+                onClick={() => navigate("/applicant/matches")}
               >
                 Gérer mes matchs
               </button>

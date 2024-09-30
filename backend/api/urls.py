@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     StaffView,
+    MatchesView,
     ApplicantSearchView,
     SectorView,
     ApplicantView,
@@ -25,6 +26,9 @@ from .views import (
     LaunchMatchingView,
     PasswordReset,
     FormationStatisticsView,
+    CompanyTestMetadataView,
+    CompanyTestDetailView,
+    CompanyView,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -54,6 +58,8 @@ urlpatterns = [
         RecontactTempApplicantView.as_view(),
         name="recontact-temp-applicant",
     ),
+    path("matches/", MatchesView.as_view(), name="match-applicant-list"),
+    path("matches/<int:pk>/", MatchesView.as_view(), name="match-applicant-detail"),
     path(
         "temp-applicants/<token>/", TempApplicantView.as_view(), name="temp-applicant"
     ),
@@ -110,6 +116,17 @@ urlpatterns = [
         ApplicationTestDetailView.as_view(),
         name="application_test_detail",
     ),
+    path(
+        "company_test/metadata/",
+        CompanyTestMetadataView.as_view(),
+        name="company_test_metadata",
+    ),
+    path(
+        "company_test/<token>/",
+        CompanyTestDetailView.as_view(),
+        name="company_test_detail",
+    ),
+    path("company/", CompanyView.as_view(), name="company-list-create"),
     path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
     path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),

@@ -109,28 +109,6 @@ const Navbar: React.FC = () => {
                           Entreprises
                         </a>
                       </li>
-                      {/* <li>
-                        <a
-                          className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900"
-                          onClick={() => navigate("/admin/match-management")}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="size-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-                            />
-                          </svg>
-                          Matchs
-                        </a>
-                      </li> */}
                       <li>
                         <a
                           className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900"
@@ -280,7 +258,7 @@ const Navbar: React.FC = () => {
                       <li>
                         <a
                           className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900"
-                          onClick={() => navigate("/applicant/matchs")}
+                          onClick={() => navigate("/applicant/matches")}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -305,7 +283,7 @@ const Navbar: React.FC = () => {
                       <li>
                         <a
                           className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900"
-                          href="#"
+                          onClick={() => navigate("/company/page")}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -349,7 +327,7 @@ const Navbar: React.FC = () => {
                       <li>
                         <a
                           className="text-sm text-gray-100 hover:bg-gray-100 hover:text-gray-900"
-                          href="#"
+                          onClick={() => navigate("/company/matches")}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
