@@ -17,6 +17,7 @@ export interface Applicant {
     id: number;
     email: string;
   };
+  id: number;
   formation?: Formation;
   resume?: string; // Assuming the resume is a URL or file path
   first_name: string;
@@ -37,6 +38,8 @@ export interface Applicant {
   skills: number[]; // Assuming this relates to an array of skill IDs
   created_at: string;
   updated_at: string;
+  link_inscription?: string;
+  token?: string;
 }
 
 export interface Sector {

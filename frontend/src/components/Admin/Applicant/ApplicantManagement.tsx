@@ -4,14 +4,7 @@ import * as XLSX from "xlsx";
 import TempApplicantForm from "./TempApplicantForm";
 import ApplicantFilters from "./ApplicantFilters";
 import ApplicantsTable from "./ApplicantsTable";
-
-// Define types for applicant and state
-interface Applicant {
-  first_name: string;
-  last_name: string;
-  email: string;
-  link_inscription?: string;
-}
+import { Applicant } from "../../../types";
 
 interface NewApplicant {
   first_name: string;

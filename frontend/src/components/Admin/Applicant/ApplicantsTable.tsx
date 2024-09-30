@@ -1,19 +1,6 @@
 import React from "react";
 import Axios from "../../../utils/Axios";
-
-interface Applicant {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  diploma?: string;
-  contract_type?: string;
-  location?: string;
-  token: string;
-  link_inscription?: string;
-}
-
+import { Applicant } from "../../../types";
 interface ApplicantsTableProps {
   applicants: Applicant[];
 }
@@ -104,13 +91,15 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                           {
                             label: "Supprimer",
                             action: () => {
-                              deleteTempApplicant(applicant.token);
+                              if (applicant.token) {
+                                deleteTempApplicant(applicant.token);
+                              }
                             },
                           },
                           {
                             label: "Relancer",
                             action: () => {
-                              recontactApplicant(applicant.id);
+                              recontactApplicant(applicant.id.toString());
                             },
                           },
                           {
@@ -129,7 +118,7 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                           {
                             label: "Supprimer",
                             action: () => {
-                              deleteApplicant(applicant.id);
+                              deleteApplicant(applicant.id.toString());
                             },
                           },
                         ]
