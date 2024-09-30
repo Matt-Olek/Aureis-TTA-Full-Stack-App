@@ -136,6 +136,17 @@ class CompanyView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
+    def delete(self, request, pk):
+        user = request.user
+        if user.is_authenticated and (user.is_superuser or user.is_staff):
+            company = get_object_or_404(Company, pk=pk)
+            company.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
 
 class JobOfferView(APIView):
     def get(self, request):

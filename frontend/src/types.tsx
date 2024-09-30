@@ -87,3 +87,17 @@ export const STATUS_MAP: Record<string, string> = {
 export const getStatusDescription = (status: number): string => {
   return STATUS_MAP[status.toString()] || "Statut inconnu"; // Default case for unknown status
 };
+
+export interface Company {
+  id: number;
+  name: string;
+  email: string;
+  sector: string;
+  codeAPE: string;
+  address: string;
+  city: string;
+  zip_code: string;
+  country: string;
+  link_inscription: boolean;
+  registrationLink?: string;
+}

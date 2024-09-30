@@ -5,9 +5,13 @@ import { Company } from "./types";
 
 interface CompaniesTableProps {
   companies: Company[];
+  setCompanies: React.Dispatch<React.SetStateAction<Company[]>>;
 }
 
-const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
+const CompaniesTable: React.FC<CompaniesTableProps> = ({
+  companies,
+  setCompanies,
+}) => (
   <div className="overflow-x-scroll w-full mt-10 h-96">
     <table className="table w-full table-zebra">
       <thead className="relative sticky top-0 z-10 bg-base-100">
@@ -52,7 +56,11 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => (
                   registrationLink={company.registrationLink}
                 />
               ) : (
-                <DropdownWithInfo companyId={company.id} />
+                <DropdownWithInfo
+                  companyId={company.id}
+                  companies={companies}
+                  setCompanies={setCompanies}
+                />
               )}
             </td>
           </tr>

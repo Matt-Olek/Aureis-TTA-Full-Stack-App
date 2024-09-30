@@ -29,12 +29,6 @@ const DropdownWithActions: React.FC<DropdownWithActionsProps> = ({
       className="dropdown-content menu bg-base-100 rounded-box z-150 w-52 p-2 shadow"
     >
       <li>
-        <a>Supprimer</a>
-      </li>
-      <li>
-        <a>Relancer</a>
-      </li>
-      <li>
         <a onClick={() => navigator.clipboard.writeText(registrationLink)}>
           Copier le lien
         </a>

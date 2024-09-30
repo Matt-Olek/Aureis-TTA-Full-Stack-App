@@ -4,7 +4,7 @@ import * as XLSX from "xlsx";
 import CompanyFilters from "./CompanyFilters";
 import CompanyModal from "./CompanyModal";
 import CompaniesTable from "./CompaniesTable";
-import { Company } from "./types";
+import { Company } from "../../../types";
 
 const CompanyManagement: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -210,7 +210,10 @@ const CompanyManagement: React.FC = () => {
       <h5 className="text-2xl font-bold text-gray-100 anton text-center">
         Résultats: {filteredCompaniesToDisplay.length} entreprises
       </h5>
-      <CompaniesTable companies={filteredCompaniesToDisplay} />
+      <CompaniesTable
+        companies={filteredCompaniesToDisplay}
+        setCompanies={setCompanies}
+      />
     </>
   );
 };

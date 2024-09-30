@@ -127,6 +127,7 @@ urlpatterns = [
         name="company_test_detail",
     ),
     path("company/", CompanyView.as_view(), name="company-list-create"),
+    path("company/<int:pk>/", CompanyView.as_view(), name="company-detail"),
     path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
     path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),
