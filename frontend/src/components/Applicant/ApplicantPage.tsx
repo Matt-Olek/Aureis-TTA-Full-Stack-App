@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ApplicantForm from "./ApplicantForm";
-import axios from "axios";
+import Axios from "../../utils/Axios";
 
 const ApplicantPage: React.FC = () => {
   const [applicantId, setApplicantId] = useState<string>("");
   const fetchApplicantId = async () => {
     try {
-      const response = await axios.get("/applicant/registration/");
-      setApplicantId(response.data.id);
-      console.log(response.data);
+      const response = await Axios.get("/applicants/registration/");
+      setApplicantId(response.data.applicant.id);
+      console.log("Applicant ID:", response.data.applicant.id);
     } catch (error) {
       console.error("Error fetching applicant ID:", error);
     }

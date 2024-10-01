@@ -62,7 +62,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   const [duration, setDuration] = useState<Choice[]>([]);
   const [formations, setFormations] = useState<Choice[]>([]);
   const navigate = useNavigate();
-  const [isModification, setIsModification] = useState(false);
 
   useEffect(() => {
     Axios.get("/user/info/").then((response) => {
@@ -97,7 +96,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
       if (response.data) {
         setInitialValues(response.data.applicant);
         console.log(response.data.applicant);
-        setIsModification(true);
       }
     });
   }, []);
@@ -117,7 +115,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   });
 
   const handleSubmit = (values: InitialValues) => {
-    if (isModification) {
+    if (applicantId) {
       // Update existing applicant
       Axios.put(`/applicants/registration/`, values).then(() => {
         window.alert("Fiche candidat mise à jour avec succès!");
