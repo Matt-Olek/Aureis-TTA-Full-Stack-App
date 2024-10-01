@@ -25,6 +25,7 @@ from .views import (
     JobOfferListCreateView,
     LaunchMatchingView,
     PasswordReset,
+    PasswordResetEmail,
     FormationStatisticsView,
     CompanyTestMetadataView,
     CompanyTestDetailView,
@@ -45,6 +46,11 @@ urlpatterns = [
         "password-reset/",
         PasswordReset.as_view(),
         name="password_reset",
+    ),
+    path(
+        "password-reset-email/",
+        PasswordResetEmail.as_view(),
+        name="password_reset_email",
     ),
     ### Model Views
     #

@@ -23,7 +23,7 @@ function ResetPassword() {
           token,
           new_password: newPassword,
         });
-        setSuccessMessage("PMot de passe réinitialisé avec succès");
+        setSuccessMessage("Mot de passe réinitialisé avec succès");
       } catch (error) {
         console.error(error);
         setErrorMessage("Erreur lors de la réinitialisation du mot de passe");
@@ -78,6 +78,9 @@ function ResetPassword() {
           {successMessage && (
             <div className="text-green-500 text-sm text-center">
               {successMessage}
+              <a href="/login" className="btn btn-primary w-full mt-4">
+                Retour à la page de connexion
+              </a>
             </div>
           )}
         </form>

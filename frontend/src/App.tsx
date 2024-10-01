@@ -18,6 +18,7 @@ import ApplicantTest from "./components/Applicant/ApplicantTest";
 import Offers from "./components/Company/Offers";
 import ManagerManagement from "./components/Admin/ManagerManagement";
 import ResetPassword from "./components/ResetPassword";
+import ResetPasswordEmail from "./components/ResetPasswordEmail";
 import FormationStatistics from "./components/Admin/FormationStatistics";
 import ApplicantMatches from "./components/Applicant/ApplicantMatches";
 import CompanyTest from "./components/Company/CompanyTest";
@@ -33,6 +34,10 @@ function App() {
           {/* Define routes that don't need layout */}
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/reset-password-email"
+            element={<ResetPasswordEmail />}
+          />
           <Route
             path="/register-applicant/:token"
             element={<CreateUser type="applicant" />}

@@ -174,25 +174,24 @@ const Offers: React.FC = () => {
                     <strong>Compétences :</strong> {offer.skills.join(", ")}
                   </p>
                   <div className="flex justify-end mt-2">
-                    {!offer.is_active && (
-                      <button
-                        className="btn btn-primary btn-sm mr-2 relative"
-                        onClick={() => {
-                          const testUrl =
-                            import.meta.env.VITE_DOMAIN + "test/" + offer.token;
-                          navigator.clipboard.writeText(testUrl);
-                          alert(
-                            "Le lien du test de personnalité a été copié dans le presse-papier."
-                          );
-                        }}
-                      >
-                        <span className="relative flex h-3 w-3 ml-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                        </span>
-                        Partager le test de personnalité
-                      </button>
-                    )}
+                    {!offer.is_active &&
+                      (() => {
+                        const testUrl =
+                          import.meta.env.VITE_DOMAIN + "test/" + offer.token;
+                        return (
+                          <>
+                            <p className="mr-2">Lien de test :</p>
+
+                            <div className="flex items-center p-2 border border-red-500 text-red-500 rounded-md">
+                              <span className="relative flex h-3 w-3 ml-2 mr-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                              </span>
+                              {testUrl}
+                            </div>
+                          </>
+                        );
+                      })()}
 
                     <button
                       className="btn btn-warning btn-sm mr-2"

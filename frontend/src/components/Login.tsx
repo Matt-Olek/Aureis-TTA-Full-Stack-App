@@ -92,7 +92,7 @@ const Login: React.FC = () => {
           <p className="text-white mt-4">
             Mot de passe oublié ?{" "}
             <a
-              href="/forgot-password"
+              href="/reset-password-email"
               className="text-green-300 hover:text-green-400"
             >
               Cliquez ici

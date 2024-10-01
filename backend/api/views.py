@@ -981,6 +981,9 @@ from django.contrib.auth import get_user_model
 
 
 class PasswordReset(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
     def post(self, request):
         uid = request.data.get("uid")
         token = request.data.get("token")
@@ -1007,6 +1010,25 @@ class PasswordReset(APIView):
             return Response(
                 {"error": "Invalid uid"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class PasswordResetEmail(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        user = get_user_model().objects.filter(email=email).first()
+        if user:
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            link_reset = f"{settings.DOMAIN}/reset-password?uid={uid}&token={token}"
+            send_registration_email(user.first_name, user.email, link_reset)
+            return Response(
+                {"message": "Email sent to user"}, status=status.HTTP_200_OK
+            )
+        return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MatchesView(APIView):
