@@ -95,7 +95,7 @@ const Login: React.FC = () => {
               href="/reset-password-email"
               className="text-green-300 hover:text-green-400"
             >
-              Cliquez ici
+              Cliquez ici pour le réinitialiser
             </a>
           </p>
         </div>
