@@ -53,7 +53,7 @@ const ApplicationTest = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    Axios.put("applicant_test/", formData)
+    Axios.post("applicant_test/", formData)
       .then((response) => {
         console.log("Updated successfully:", response.data);
         navigate("/#home"); // Redirect to home page after successful update

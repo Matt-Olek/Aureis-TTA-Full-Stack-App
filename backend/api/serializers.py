@@ -64,11 +64,15 @@ class SectorSerializer(serializers.ModelSerializer):
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
-    sector = SectorSerializer(many=True, required=False)
+    sector = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Sector.objects.all(), required=False
+    )
     skills = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Skill.objects.all(), required=False
     )
-    formation = FormationSerializer()
+    formation = serializers.PrimaryKeyRelatedField(
+        queryset=Formation.objects.all(), required=False
+    )
 
     class Meta:
         model = Applicant

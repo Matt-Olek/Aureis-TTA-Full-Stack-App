@@ -261,7 +261,7 @@ class ApplicationTestDetailView(APIView):
                 {"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-    def put(self, request):
+    def post(self, request):
         try:
             user = request.user
             applicant = Applicant.objects.get(user=user)
@@ -396,7 +396,10 @@ class ApplicantInfo(APIView):
             pass
         try:
             applicant_matches = match_applicant.objects.filter(application=application)
-            applicant_matches = True
+            if applicant_matches:
+                applicant_matches = True
+            else:
+                applicant_matches = False
         except:
             pass
         return Response(

@@ -62,6 +62,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   const [duration, setDuration] = useState<Choice[]>([]);
   const [formations, setFormations] = useState<Choice[]>([]);
   const navigate = useNavigate();
+  const [isModification, setIsModification] = useState(false);
 
   useEffect(() => {
     Axios.get("/user/info/").then((response) => {
@@ -96,6 +97,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
       if (response.data) {
         setInitialValues(response.data.applicant);
         console.log(response.data.applicant);
+        setIsModification(true);
       }
     });
   }, []);
@@ -115,7 +117,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   });
 
   const handleSubmit = (values: InitialValues) => {
-    if (applicantId) {
+    if (isModification) {
       // Update existing applicant
       Axios.put(`/applicants/registration/`, values).then(() => {
         window.alert("Fiche candidat mise à jour avec succès!");
@@ -382,7 +384,8 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
             <div className="form-control">
               <label htmlFor="kilometers_away" className="label">
                 <span className="label-text">
-                  Distance maximum en kilomètres
+                  Distance maximum en kilomètres (-1 si pas de préférence, sinon
+                  5,10,50,100)
                 </span>
               </label>
               <Field
