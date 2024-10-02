@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import toast from "react-hot-toast";
 import Axios from "../../utils/Axios";
 
 interface InitialValues {
@@ -119,12 +120,14 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
       // Update existing applicant
       Axios.put(`/applicants/registration/`, values).then(() => {
         window.alert("Fiche candidat mise à jour avec succès!");
+        toast("Fiche candidat mise à jour avec succès!");
         navigate("/#home"); // Redirect to the home page
       });
     } else {
       // Create new applicant
       Axios.post("/applicants/registration/", values).then(() => {
         window.alert("Fiche candidat créée avec succès!");
+        toast("Fiche candidat créée avec succès!");
         navigate("/#home"); // Redirect to the home page
       });
     }

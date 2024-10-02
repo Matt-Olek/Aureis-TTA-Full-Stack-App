@@ -2,6 +2,7 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Axios from "../../utils/Axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 // Define types for metadata and form data
 interface FieldInfo {
@@ -56,6 +57,7 @@ const ApplicationTest = () => {
     Axios.post("applicant_test/", formData)
       .then((response) => {
         console.log("Updated successfully:", response.data);
+        toast.success("Données mises à jour avec succès");
         navigate("/#home"); // Redirect to home page after successful update
       })
       .catch((error) => console.error("Error updating data:", error));

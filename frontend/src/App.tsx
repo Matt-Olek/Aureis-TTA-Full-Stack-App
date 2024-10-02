@@ -24,7 +24,7 @@ import ApplicantMatches from "./components/Applicant/ApplicantMatches";
 import CompanyTest from "./components/Company/CompanyTest";
 import CompanyMatches from "./components/Company/CompanyMatches";
 import CompanyPage from "./components/Company/CompanyPage";
-
+import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <AuthProvider>
@@ -93,6 +93,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
+      <Toaster />
     </AuthProvider>
   );
 }
