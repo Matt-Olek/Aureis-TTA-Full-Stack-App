@@ -13,7 +13,14 @@ SECRET_KEY = "django-insecure-tneln6)=bhhbk131(h)hy+2p6t(7z^maepx_^e+3_6kr7!_v6p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "37.187.49.148", "django", "nginx"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "37.187.49.148",
+    "django",
+    "nginx",
+    "tta-ecole.com",
+]
 
 DOMAIN = os.getenv("DOMAIN", "http://localhost:5173")
 
@@ -44,7 +51,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://tta-ecole.com",
     "https://www.tta-ecole.com",
     "http://tta-ecole.com",
-    "http://www.tta-ecole.com",
 ]
 
 
