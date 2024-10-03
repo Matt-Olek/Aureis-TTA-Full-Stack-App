@@ -41,6 +41,10 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://37.187.49.148",  # Your frontend URL
     "http://localhost:5173",  # If you're also running locally for development
+    "https://tta-ecole.com",
+    "https://www.tta-ecole.com",
+    "http://tta-ecole.com",
+    "http://www.tta-ecole.com",
 ]
 
 
