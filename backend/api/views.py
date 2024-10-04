@@ -51,6 +51,7 @@ from .mails import (
     send_registration_email,
     send_registration_email_company,
     send_registration_email_staff,
+    send_reset_password_email,
 )
 from api.models import CustomUser
 import time
@@ -409,6 +410,48 @@ class ApplicantInfo(APIView):
                 "applicant_matches": applicant_matches,
             }
         )
+
+
+class CompanyInfo(APIView):
+    def get(self, request):
+        user = request.user
+        try:
+            company = company_user_link.objects.get(user=user).company
+            if company.sector:
+                company_page = True
+            else:
+                company_page = False
+            if company.joboffer_set.all():
+                all_company_offers = company.joboffer_set.all()
+                active_company_offers = all_company_offers.filter(is_active=True)
+                if active_company_offers:
+                    company_offers = True
+                else:
+                    company_offers = False
+                ##if a job offer is implied in a match
+                for offer in active_company_offers:
+                    if match_applicant.objects.filter(offer=offer):
+                        company_match = True
+                        break
+                    else:
+                        company_match = False
+
+            else:
+                company_offers = False
+                company_match = False
+
+            return Response(
+                {
+                    "company_page": company_page,
+                    "company_offers": company_offers,
+                    "company_matches": company_match,
+                }
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"message": "An error occured" + str(e)},
+            )
 
 
 class TempApplicantView(APIView):
@@ -1027,7 +1070,7 @@ class PasswordResetEmail(APIView):
             token = token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             link_reset = f"{settings.DOMAIN}/reset-password?uid={uid}&token={token}"
-            send_registration_email(user.first_name, user.email, link_reset)
+            send_reset_password_email(user.first_name, user.email, link_reset)
             return Response(
                 {"message": "Email sent to user"}, status=status.HTTP_200_OK
             )

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Axios from "../../utils/Axios";
+import toast from "react-hot-toast";
 
 interface Formation {
   id: number;
@@ -26,8 +27,16 @@ interface FormationLink {
 const FormationManagement = () => {
   const [formations, setFormations] = useState<Formation[]>([]);
   const [formationLinks, setFormationLinks] = useState<FormationLink[]>([]);
-  const [Staff, setStaff] = useState<Staff[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [error, setError] = useState<string>("");
+
+  // State for new staff member input
+  const [newStaff, setNewStaff] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+  });
+
   useEffect(() => {
     fetchFormations();
     fetchStaff();
@@ -47,6 +56,7 @@ const FormationManagement = () => {
       console.error(err);
     }
   };
+
   const fetchFormationLink = async () => {
     try {
       const response = await Axios.get<FormationLink[]>("/formationlink/");
@@ -59,6 +69,7 @@ const FormationManagement = () => {
       console.error(err);
     }
   };
+
   const addFormationLink = async (manager: number, formation: number) => {
     try {
       await Axios.post("/formationlink/", {
@@ -66,15 +77,18 @@ const FormationManagement = () => {
         formation,
       });
       fetchFormationLink();
+      toast.success("Formation ajoutée avec succès.");
     } catch (err) {
       setError("Une erreur s'est produite lors de la création du lien.");
       console.error(err);
     }
   };
+
   const deleteFormationLink = async (id: number) => {
     try {
       await Axios.delete(`/formationlink/${id}/`);
       setFormationLinks(formationLinks.filter((link) => link.id !== id));
+      toast.success("La formation a été dissociée avec succès.");
     } catch (err) {
       setError("Une erreur s'est produite lors de la suppression du lien.");
       console.error(err);
@@ -94,10 +108,12 @@ const FormationManagement = () => {
       console.error(err);
     }
   };
+
   const deleteStaff = async (id: number) => {
     try {
       await Axios.delete(`/staff/${id}/`);
-      setStaff(Staff.filter((staff) => staff.id !== id));
+      toast.success("Le membre a été supprimé avec succès.");
+      setStaff(staff.filter((s) => s.id !== id));
     } catch (err) {
       setError(
         "Une erreur s'est produite lors de la suppression du personnel."
@@ -108,30 +124,27 @@ const FormationManagement = () => {
 
   const createStaff = async () => {
     try {
-      const first_name = (
-        document.querySelector(
-          'input[placeholder="Prénom"]'
-        ) as HTMLInputElement
-      ).value;
-
-      const last_name = (
-        document.querySelector('input[placeholder="Nom"]') as HTMLInputElement
-      ).value;
-
-      const email = (
-        document.querySelector('input[placeholder="Email"]') as HTMLInputElement
-      ).value;
-
-      await Axios.post("/staff/", {
-        first_name,
-        last_name,
-        email,
-      });
+      await Axios.post("/staff/", newStaff);
+      toast.success("Le membre a été créé avec succès.");
       fetchStaff();
+      // Reset input values
+      setNewStaff({
+        first_name: "",
+        last_name: "",
+        email: "",
+      });
     } catch (err) {
       setError("Une erreur s'est produite lors de la création du personnel.");
       console.error(err);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewStaff((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -150,7 +163,7 @@ const FormationManagement = () => {
           alt="Entreprises"
         />
       </div>
-      <div className=" w-full p-10 rounded-md items-center justify-center">
+      <div className="w-full p-10 rounded-md items-center justify-center">
         <h1 className="text-3xl font-bold text-gray-100 anton">
           Membres du staff
         </h1>
@@ -166,7 +179,7 @@ const FormationManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {Staff.map((staff) => (
+              {staff.map((staff) => (
                 <tr key={staff.id}>
                   <td>{staff.first_name}</td>
                   <td>{staff.last_name}</td>
@@ -250,22 +263,28 @@ const FormationManagement = () => {
         <div className="flex items-center justify-center space-x-4 my-5">
           <input
             type="text"
+            name="first_name"
             placeholder="Prénom"
             className="input input-primary input-bordered w-full"
+            value={newStaff.first_name}
+            onChange={handleInputChange}
           />
-
           <input
             type="text"
+            name="last_name"
             placeholder="Nom"
             className="input input-primary input-bordered w-full"
+            value={newStaff.last_name}
+            onChange={handleInputChange}
           />
-
           <input
             type="email"
+            name="email"
             placeholder="Email"
             className="input input-primary input-bordered w-full"
+            value={newStaff.email}
+            onChange={handleInputChange}
           />
-
           <button onClick={createStaff} className="btn btn-sm btn-primary">
             Créer le membre du staff
           </button>

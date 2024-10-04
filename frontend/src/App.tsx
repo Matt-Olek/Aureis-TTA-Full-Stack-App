@@ -30,6 +30,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
+        <Toaster
+          toastOptions={{
+            className: "",
+            style: {
+              border: "1px solid #1c1917",
+              padding: "5px",
+              color: "#ffffff",
+              background: "#1c1917",
+            },
+          }}
+        />
         <Routes>
           {/* Define routes that don't need layout */}
           <Route path="/login" element={<Login />} />
@@ -93,7 +104,6 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-      <Toaster />
     </AuthProvider>
   );
 }

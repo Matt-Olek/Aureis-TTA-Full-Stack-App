@@ -16,6 +16,12 @@ interface FetchInfoStatus {
   applicant_test: boolean;
   applicant_matches: boolean;
 }
+
+interface FetchInfoStatusCompany {
+  company_page: boolean;
+  company_offers: boolean;
+  company_matches: boolean;
+}
 interface Formation {
   id: number;
   name: string;
@@ -31,6 +37,12 @@ const HomeModules: React.FC = () => {
     applicant_test: false,
     applicant_matches: false,
   });
+  const [fetchInfoStatusCompany, setFetchInfoStatusCompany] =
+    useState<FetchInfoStatusCompany>({
+      company_page: false,
+      company_offers: false,
+      company_matches: false,
+    });
 
   useEffect(() => {
     if (user.type === "A") {
@@ -40,6 +52,21 @@ const HomeModules: React.FC = () => {
           const response = await Axios.get<FetchInfoStatus>("applicant/info/");
           console.log(response.data);
           setFetchInfoStatus(response.data);
+        } catch (error) {
+          console.error("Error fetching info status:", error);
+        }
+      };
+
+      fetchInfo();
+    } else if (user.type === "C") {
+      const fetchInfo = async () => {
+        console.log("Fetching info status");
+        try {
+          const response = await Axios.get<FetchInfoStatusCompany>(
+            "company/info/"
+          );
+          console.log(response.data);
+          setFetchInfoStatusCompany(response.data);
         } catch (error) {
           console.error("Error fetching info status:", error);
         }
@@ -271,12 +298,124 @@ const HomeModules: React.FC = () => {
   } else if (user.type === "C") {
     return (
       <div className="flex flex-col items-center justify-center mt-5">
-        <button
-          onClick={() => navigate("/company/offers")}
-          className="btn btn-primary btn-outline"
-        >
-          Mes besoins en recrutement
-        </button>
+        <ul className="timeline timeline-vertical fade-in">
+          <li>
+            <div className="timeline-start timeline-box p-0">
+              <button
+                className={`btn ${
+                  fetchInfoStatusCompany.company_page
+                    ? "btn-primary"
+                    : "btn-outline"
+                }`}
+                onClick={() => navigate("/company/page")}
+              >
+                1. Remplir la fiche entreprise
+              </button>
+            </div>
+            <div className="timeline-middle p-0">
+              {fetchInfoStatusCompany.company_page ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="text-primary h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <span className="badge badge-base bold">1</span>
+              )}
+            </div>
+            <hr
+              className={
+                fetchInfoStatusCompany.company_page ? "bg-primary" : ""
+              }
+            />
+          </li>
+          <li>
+            <hr
+              className={
+                fetchInfoStatusCompany.company_offers ? "bg-primary" : ""
+              }
+            />
+            <div className="timeline-middle p-0">
+              {fetchInfoStatusCompany.company_offers ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="text-primary h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <span className="badge badge-base bold">2</span>
+              )}
+            </div>
+            <div className="timeline-end timeline-box p-0">
+              <button
+                className={`btn ${
+                  fetchInfoStatusCompany.company_offers
+                    ? "btn-primary"
+                    : "btn-outline"
+                }`}
+                onClick={() => navigate("/company/offers")}
+              >
+                Remplir des besoins
+              </button>
+            </div>
+            <hr
+              className={
+                fetchInfoStatusCompany.company_offers ? "bg-primary" : ""
+              }
+            />
+          </li>
+          <li>
+            <hr
+              className={
+                fetchInfoStatusCompany.company_matches ? "bg-primary" : ""
+              }
+            />
+            <div className="timeline-start timeline-box p-0">
+              <button
+                className={`btn ${
+                  fetchInfoStatusCompany.company_matches
+                    ? "btn-primary"
+                    : "btn-outline"
+                } join-item`}
+                onClick={() => navigate("/company/matches")}
+              >
+                Gérer mes matchs
+              </button>
+            </div>
+            <div className="timeline-middle">
+              {fetchInfoStatus.applicant_matches ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="text-primary h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <span className="badge badge-base bold">3</span>
+              )}
+            </div>
+          </li>
+        </ul>
       </div>
     );
   }

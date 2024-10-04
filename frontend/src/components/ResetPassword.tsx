@@ -66,10 +66,11 @@ function ResetPassword() {
               className="input input-bordered w-full"
             />
           </div>
-
-          <button type="submit" className="btn btn-primary w-full mt-4">
-            Réinitialiser le mot de passe
-          </button>
+          {!successMessage && (
+            <button type="submit" className="btn btn-primary w-full mt-4">
+              Réinitialiser le mot de passe
+            </button>
+          )}
           {errorMessage && (
             <div className="text-red-500 text-sm text-center">
               {errorMessage}

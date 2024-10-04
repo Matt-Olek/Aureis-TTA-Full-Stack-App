@@ -1,13 +1,13 @@
 import React, { useState, FormEvent } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login: React.FC = () => {
   const { login } = useAuth(); // Use the login function from context
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loginError, setLoginError] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleShowPassword = () => {
@@ -15,14 +15,26 @@ const Login: React.FC = () => {
   };
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    const loadingToast = toast.loading("Connexion en cours..."); // Show loading toast
     event.preventDefault(); // Prevent default form submission
 
     try {
       await login(email, password); // Call the login function from AuthContext
-      navigate("/"); // Redirect to the home page or desired page
+      setTimeout(() => {
+        toast.dismiss(loadingToast); // Dismiss loading toast
+        toast.success("Connexion réussie !");
+        setTimeout(() => {
+          navigate("/"); // Redirect to home page after successful login
+        }, 1000);
+      }, 1000);
     } catch (error) {
       console.error("Login failed:", error);
-      setLoginError(true);
+      setTimeout(() => {
+        toast.dismiss(loadingToast);
+        toast.error(
+          "Identifiant ou mot de passe incorrect. Veuillez réessayer."
+        );
+      }, 1000);
     }
   };
 
@@ -84,11 +96,6 @@ const Login: React.FC = () => {
               Se connecter
             </button>
           </form>
-          {loginError && (
-            <p id="login-help-message" className="text-red-500 text-sm mt-2">
-              Identifiant ou mot de passe incorrect. Veuillez réessayer.
-            </p>
-          )}
           <p className="text-white mt-4">
             Mot de passe oublié ?{" "}
             <a

@@ -26,7 +26,7 @@ function ResetPasswordEmail() {
 
   return (
     <div className="flex justify-center items-center h-screen bg-base-100">
-      <div className="w-full max-w-md p-8 space-y-6 card shadow-lg rounded-lg">
+      <div className="w-full max-w-md p-8 space-y-6 card  rounded-lg">
         <h2 className="text-2xl font-bold text-center text-base-800">
           Réinitialiser le mot de passe
         </h2>
@@ -45,10 +45,11 @@ function ResetPasswordEmail() {
               required
             />
           </div>
-
-          <button type="submit" className="btn btn-primary w-full mt-4">
-            Envoyer l'e-mail de réinitialisation
-          </button>
+          {!successMessage && (
+            <button type="submit" className="btn btn-primary w-full mt-4">
+              Envoyer l'e-mail de réinitialisation
+            </button>
+          )}
           {errorMessage && (
             <div className="text-red-500 text-sm text-center">
               {errorMessage}

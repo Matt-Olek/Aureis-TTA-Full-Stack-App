@@ -118,18 +118,34 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   const handleSubmit = (values: InitialValues) => {
     if (applicantId) {
       // Update existing applicant
-      Axios.put(`/applicants/registration/`, values).then(() => {
-        window.alert("Fiche candidat mise à jour avec succès!");
-        toast("Fiche candidat mise à jour avec succès!");
-        navigate("/#home"); // Redirect to the home page
-      });
+      Axios.put(`/applicants/registration/`, values)
+        .then(() => {
+          toast.success("Fiche candidat mise à jour avec succès!");
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+            navigate("/#home"); // Redirect to the home page
+          }, 1000);
+        })
+        .catch((error) => {
+          console.error("Error updating applicant:", error);
+          toast.error("Erreur lors de la mise à jour de la fiche candidat.");
+        });
     } else {
       // Create new applicant
-      Axios.post("/applicants/registration/", values).then(() => {
-        window.alert("Fiche candidat créée avec succès!");
-        toast("Fiche candidat créée avec succès!");
-        navigate("/#home"); // Redirect to the home page
-      });
+      Axios.post("/applicants/registration/", values)
+        .then(() => {
+          window.alert("Fiche candidat créée avec succès!");
+          toast.success("Fiche candidat créée avec succès!");
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+            navigate("/#home");
+            // scroll to top
+          }, 1000);
+        })
+        .catch((error) => {
+          console.error("Error creating applicant:", error);
+          toast.error("Erreur lors de la création de la fiche candidat.");
+        });
     }
   };
 

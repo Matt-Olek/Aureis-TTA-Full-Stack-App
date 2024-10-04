@@ -58,7 +58,10 @@ const ApplicationTest = () => {
       .then((response) => {
         console.log("Updated successfully:", response.data);
         toast.success("Données mises à jour avec succès");
-        navigate("/#home"); // Redirect to home page after successful update
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          navigate("/#home"); // Redirect to home page after successful update
+        }, 1000);
       })
       .catch((error) => console.error("Error updating data:", error));
   };

@@ -5,6 +5,7 @@ import TempApplicantForm from "./TempApplicantForm";
 import ApplicantFilters from "./ApplicantFilters";
 import ApplicantsTable from "./ApplicantsTable";
 import { Applicant } from "../../../types";
+import toast from "react-hot-toast";
 
 interface NewApplicant {
   first_name: string;
@@ -51,9 +52,13 @@ const ApplicantManagement: React.FC = () => {
     e.preventDefault();
     try {
       await Axios.post("/temp-applicants/", [newApplicant]);
+      toast.success("Candidat temporaire ajouté avec succès.");
       setNewApplicant({ first_name: "", last_name: "", email: "" });
       fetchApplicants();
     } catch {
+      toast.error(
+        "Une erreur s'est produite lors de l'ajout du candidat temporaire."
+      );
       console.error(
         "Une erreur s'est produite lors de l'ajout du candidat temporaire:"
       );
@@ -70,6 +75,7 @@ const ApplicantManagement: React.FC = () => {
 
   const handleFileUpload = async (file: File) => {
     if (!file) {
+      toast.error("Aucun fichier sélectionné");
       console.error("No file selected");
       return;
     }
@@ -97,8 +103,10 @@ const ApplicantManagement: React.FC = () => {
 
       try {
         await Axios.post("/applicants/", tempApplicantsData);
+        toast.success("Candidats ajoutés avec succès.");
         fetchApplicants();
       } catch (error) {
+        toast.error("Erreur lors de l'ajout des candidats temporaires.");
         console.error("Error uploading temp applicants:", error);
       }
     };
@@ -154,7 +162,7 @@ const ApplicantManagement: React.FC = () => {
           alt="Alternant"
         />
       </div>
-      <div className="flex items-center justify-center space-x-4 my-5">
+      <div className="flex items-center justify-center space-x-4 my-5 h1/2">
         <h1 className="text-3xl font-bold text-gray-100 anton">Candidats</h1>
         <button
           className="btn btn-ghost text-primary"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import Axios from "../../utils/Axios";
 import { Offer } from "../../types";
+import toast from "react-hot-toast";
 
 const Offers: React.FC = () => {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -62,6 +63,12 @@ const Offers: React.FC = () => {
           is_active: false,
           token: "",
         }); // Reset form fields
+        toast.success(
+          "Besoin ajouté avec succès ! N'oubliez pas de transmettre le lien de test au tuteur pour activer l'offre.",
+          {
+            duration: 10000,
+          }
+        );
       })
       .catch((error) => {
         console.error("Error adding offer:", error);
@@ -125,11 +132,36 @@ const Offers: React.FC = () => {
           <h1 className="text-4xl font-bold mt-6 text-center text-white lily">
             Vos besoins en <span className="text-primary">recrutement</span>
           </h1>
+          <p className="text-center text-gray-300 mt-2">
+            Chez TrouveTonAlternance, nous sommes convaincus que chaque besoin
+            demande une attention particulière. C'est pourquoi, pour chaque
+            besoin, afin d'activer l'offre, nous vous demandons de transmettre
+            le lien d'un rapide test au futur tuteur de l'alternant afin de
+            cerner au mieux ses attentes.
+          </p>
+
+          <hr className="my-5 border-gray-500" />
+
+          <p className="text-left text-white">
+            <span className="h-3 w-3 ml-2">
+              <span className="animate-ping inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>{" "}
+            : Besoin actif
+          </p>
+
+          <p className="text-left text-white">
+            <span className="h-3 w-3 ml-2">
+              <span className="animate-ping inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>{" "}
+            : Besoin inactif, le test n'a pas été transmis
+          </p>
 
           <div className="w-full my-10 p-2">
             {offers.map((offer) => (
               <div
-                className="collapse bg-base-200 my-2 border hover:border-primary transition-all"
+                className="collapse collapse-arrow  bg-base-200 my-2 border hover:border-primary transition-all"
                 key={offer.id}
               >
                 <input
@@ -157,61 +189,87 @@ const Offers: React.FC = () => {
                   </div>
                 </div>
                 <div className="collapse-content">
-                  <p>
-                    <strong>Ville :</strong> {offer.location}
-                  </p>
-                  <p>
-                    <strong>Type de contrat :</strong> {offer.contract_type}
-                  </p>
-                  <p>
-                    <strong>Niveau d&apos;éducation :</strong>{" "}
-                    {offer.target_educational_level}
-                  </p>
-                  <p>
-                    <strong>Description :</strong> {offer.description}
-                  </p>
-                  <p>
-                    <strong>Compétences :</strong> {offer.skills.join(", ")}
-                  </p>
-                  <div className="flex justify-end mt-2">
-                    {!offer.is_active &&
-                      (() => {
-                        const testUrl =
-                          import.meta.env.VITE_DOMAIN + "test/" + offer.token;
-                        return (
-                          <>
-                            <p className="mr-2">Lien de test :</p>
-
-                            <div className="flex items-center p-2 border border-red-500 text-red-500 rounded-md">
-                              <span className="relative flex h-3 w-3 ml-2 mr-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                              </span>
+                  <div className="form-data space-y-2 mb-4 p-2">
+                    <div className="flex items-center">
+                      <strong className="w-1/3">Ville :</strong>
+                      <span className="w-2/3">{offer.location}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <strong className="w-1/3">Type de contrat :</strong>
+                      <span className="w-2/3">{offer.contract_type}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <strong className="w-1/3">Niveau d'éducation :</strong>
+                      <span className="w-2/3">
+                        {offer.target_educational_level}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <strong className="w-1/3">Description :</strong>
+                      <span className="w-2/3">{offer.description}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <strong className="w-1/3">Compétences :</strong>
+                      <span className="w-2/3">{offer.skills.join(", ")}</span>
+                    </div>
+                  </div>
+                  {!offer.is_active &&
+                    (() => {
+                      const testUrl =
+                        import.meta.env.VITE_DOMAIN + "test/" + offer.token;
+                      return (
+                        <div className="flex flex-col w-full mb-4">
+                          <label className="font-semibold mb-2">
+                            <span className="relative flex h-3 w-3 mr-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span className="inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                            Lien de test :
+                          </label>
+                          <div className="flex justify-between p-2 border border-gray-300 rounded-md">
+                            <a
+                              href={testUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className=" hover:underline decoration-none text-primary"
+                            >
                               {testUrl}
-                            </div>
-                          </>
-                        );
-                      })()}
-
-                    <button
-                      className="btn btn-warning btn-sm mr-2"
-                      onClick={() => {
-                        setEditingOffer(offer);
-                        (
-                          document.getElementById(
-                            "offer_modal"
-                          ) as HTMLDialogElement
-                        ).showModal();
-                      }}
-                    >
-                      Modifier
-                    </button>
-                    <button
-                      className="btn btn-error btn-sm"
-                      onClick={() => handleDeleteOffer(offer.id!)}
-                    >
-                      Supprimer
-                    </button>
+                            </a>
+                            <button
+                              className="btn btn-sm ml-4"
+                              onClick={() => {
+                                navigator.clipboard.writeText(testUrl);
+                                toast.success("Lien copié !");
+                              }}
+                            >
+                              Copier le lien
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  <div className="flex justify-end mt-2">
+                    <div className="flex items-center">
+                      <button
+                        className="btn btn-warning btn-sm mr-2"
+                        onClick={() => {
+                          setEditingOffer(offer);
+                          (
+                            document.getElementById(
+                              "offer_modal"
+                            ) as HTMLDialogElement
+                          ).showModal();
+                        }}
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        className="btn btn-error btn-sm"
+                        onClick={() => handleDeleteOffer(offer.id!)}
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

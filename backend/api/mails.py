@@ -49,3 +49,18 @@ def send_registration_email_staff(name, email, link_inscription):
 
     # Send the email
     send_mail(subject, message, from_email, [email])
+
+
+def send_reset_password_email(name, email, link_reset_password):
+    subject = "Réinitialisation de votre mot de passe - TrouveTonalternance.com"
+    message = (
+        f"Bonjour {name},\n\n"
+        f"Vous avez demandé la réinitialisation de votre mot de passe. Pour choisir un nouveau mot de passe, veuillez cliquer sur le lien ci-dessous:\n"
+        f"{link_reset_password}\n\n"
+        "À très bientôt !\n"
+        "L’équipe d'Aureis Formation"
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    # Send the email
+    send_mail(subject, message, from_email, [email])

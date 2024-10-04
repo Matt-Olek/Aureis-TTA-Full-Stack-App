@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Axios from "../../utils/Axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Définir l'interface Company
 interface Company {
   name: string;
   sector: string[];
-  address: string;
+  adress: string;
   city: string;
   zip_code: string;
   country: string;
@@ -23,7 +24,7 @@ const CompanyPage = () => {
   const [company, setCompany] = useState<Company>({
     name: "",
     sector: [],
-    address: "",
+    adress: "",
     city: "",
     zip_code: "",
     country: "France",
@@ -83,10 +84,14 @@ const CompanyPage = () => {
     e.preventDefault();
     try {
       const response = await Axios.post("/company/", company);
-      console.log("Entreprise créée avec succès :", response.data);
-      navigate("/#home");
+      console.log("Entreprise enregistrée avec succès :", response.data);
+      toast.success("Entreprise enregistrée avec succès");
+      setTimeout(() => {
+        navigate("/#home");
+      }, 1000);
     } catch (error) {
       console.error("Erreur lors de la création de l'entreprise :", error);
+      toast.error("Erreur lors de la création de l'entreprise");
     }
   };
 
@@ -112,7 +117,7 @@ const CompanyPage = () => {
         `}
       </style>
 
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto w-full p-4 lg:w-1/2">
         <h1 className="text-2xl font-bold mb-4">Page de l'entreprise</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
@@ -132,7 +137,9 @@ const CompanyPage = () => {
 
           <div className="form-control">
             <label className="label" htmlFor="sector">
-              <span className="label-text">Secteur</span>
+              <span className="label-text">
+                Secteur d'activité (maintenez Ctrl pour sélectionner plusieurs)
+              </span>
             </label>
             <select
               id="sector"
@@ -141,6 +148,7 @@ const CompanyPage = () => {
               value={company.sector}
               onChange={handleChange}
               className="select select-bordered"
+              style={{ height: "200px" }}
             >
               {sectors.map((sector) => (
                 <option key={sector.id} value={sector.id}>
@@ -151,14 +159,14 @@ const CompanyPage = () => {
           </div>
 
           <div className="form-control">
-            <label className="label" htmlFor="address">
+            <label className="label" htmlFor="adress">
               <span className="label-text">Adresse</span>
             </label>
             <input
-              id="address"
-              name="address"
+              id="adress"
+              name="adress"
               type="text"
-              value={company.address}
+              value={company.adress}
               onChange={handleChange}
               className="input input-bordered"
             />
@@ -221,7 +229,7 @@ const CompanyPage = () => {
 
           <div className="form-control mt-6">
             <button type="submit" className="btn btn-primary">
-              Soumettre
+              Enregistrer
             </button>
           </div>
         </form>

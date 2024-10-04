@@ -30,6 +30,7 @@ from .views import (
     CompanyTestMetadataView,
     CompanyTestDetailView,
     CompanyView,
+    CompanyInfo,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -112,6 +113,7 @@ urlpatterns = [
     path("choices/", ChoicesView.as_view(), name="choices"),
     path("user/info/", CustomUserView.as_view(), name="user-info"),
     path("applicant/info/", ApplicantInfo.as_view(), name="applicant-info"),
+    path("company/info/", CompanyInfo.as_view(), name="company-info"),
     path(
         "applicant_test/metadata/",
         ApplicationTestMetadataView.as_view(),

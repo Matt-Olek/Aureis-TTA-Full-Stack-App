@@ -49,7 +49,7 @@ def match_applicant_to_job_offer(applicant, job_offer):
             industry_score=industry_score,
             geographic_score=geographic_score,
             resume_score=resume_score,
-            status="Pending",
+            status=0,  # Pending status
         )
         # Save the new match
         new_match.save()

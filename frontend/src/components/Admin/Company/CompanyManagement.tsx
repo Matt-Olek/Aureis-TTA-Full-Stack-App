@@ -5,6 +5,7 @@ import CompanyFilters from "./CompanyFilters";
 import CompanyModal from "./CompanyModal";
 import CompaniesTable from "./CompaniesTable";
 import { Company } from "../../../types";
+import toast from "react-hot-toast";
 
 const CompanyManagement: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -70,6 +71,7 @@ const CompanyManagement: React.FC = () => {
     e.preventDefault();
     try {
       await Axios.post("/companies/", [newCompany]);
+      toast.success("Company added successfully");
       setNewCompany({
         id: 0,
         name: "",
@@ -86,6 +88,7 @@ const CompanyManagement: React.FC = () => {
       await fetchCompanies();
     } catch {
       console.error("Error adding company");
+      toast.error("Error adding company");
     }
   };
 
@@ -120,9 +123,11 @@ const CompanyManagement: React.FC = () => {
 
         try {
           await Axios.post("/companies/", companyData);
+          toast.success("Companies added successfully");
           await fetchCompanies();
         } catch (error) {
           console.error("Error uploading temp companies:", error);
+          toast.error("Error uploading temp companies");
         }
       }
     };
