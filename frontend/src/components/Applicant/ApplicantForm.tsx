@@ -26,7 +26,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
     contract_type: "",
     sector: [],
     location: "",
-    kilometers_away: 0,
+    kilometers_away: -1,
     resume: null,
     formation: null,
     skills: [],
