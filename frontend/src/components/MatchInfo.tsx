@@ -234,16 +234,16 @@ const MatchInfo: React.FC<MatchInfoProps> = ({ match, type, adminView }) => {
                 </div>
 
                 {/* Secteur */}
-                <div className="flex items-center mb-2">
+                {/* <div className="flex items-center mb-2">
                   <span className="text-lg font-semibold">Secteur </span>
                   <span className="ml-2">
                     {match.application.applicant.sector.map((sector) => (
-                      <li key={sector.id} className="mr-2">
-                        {sector.name}
+                      <li key={sector} className="mr-2">
+                        {sector}
                       </li>
                     ))}
                   </span>
-                </div>
+                </div> */}
 
                 {/* Localisation */}
                 <div className="flex items-center mb-2">

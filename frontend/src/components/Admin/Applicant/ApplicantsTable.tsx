@@ -99,7 +99,9 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                           {
                             label: "Relancer",
                             action: () => {
-                              recontactApplicant(applicant.id.toString());
+                              if (applicant.id) {
+                                recontactApplicant(applicant.id.toString());
+                              }
                             },
                           },
                           {
@@ -118,7 +120,9 @@ const ApplicantsTable: React.FC<ApplicantsTableProps> = ({ applicants }) => {
                           {
                             label: "Supprimer",
                             action: () => {
-                              deleteApplicant(applicant.id.toString());
+                              if (applicant.id) {
+                                deleteApplicant(applicant.id.toString());
+                              }
                             },
                           },
                         ]
