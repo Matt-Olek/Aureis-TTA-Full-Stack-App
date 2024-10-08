@@ -3,6 +3,7 @@ import { Match } from "../types";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import Axios from "../utils/Axios"; // Import Axios for API calls
+import downloadFile from "../utils/Download";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -257,6 +258,25 @@ const MatchInfo: React.FC<MatchInfoProps> = ({ match, type, adminView }) => {
                   <span className="text-lg font-semibold">Distance :</span>
                   <span className="ml-2">
                     {match.application.applicant.kilometers_away} km
+                  </span>
+                </div>
+
+                {/* CV */}
+                <div className="flex items-center mb-2">
+                  <span className="text-lg font-semibold">CV :</span>
+                  <span className="ml-2">
+                    <button
+                      className="btn btn-primary btn-sm btn-outline"
+                      onClick={() =>
+                        downloadFile(
+                          match.application.applicant.resume
+                            ?.split("/")
+                            .pop() || ""
+                        )
+                      }
+                    >
+                      Télécharger
+                    </button>
                   </span>
                 </div>
               </div>

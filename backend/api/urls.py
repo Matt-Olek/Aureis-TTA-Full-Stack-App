@@ -31,6 +31,8 @@ from .views import (
     CompanyTestDetailView,
     CompanyView,
     CompanyInfo,
+    AIProcessAPIView,
+    FileDownloadView,
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -139,10 +141,6 @@ urlpatterns = [
     path("offers/", JobOfferListCreateView.as_view(), name="offer-list-create"),
     path("offers/<int:pk>/", JobOfferListCreateView.as_view(), name="offer-detail"),
     path("launch_matching/", LaunchMatchingView.as_view(), name="launch_matching"),
-    ### Views à supprimer/revoir
-    # path(
-    #     "applicants/",
-    #     ApplicantListCreateAPIView.as_view(),
-    #     name="applicant-list-create",
-    # ),
+    path("auto-fill/", AIProcessAPIView.as_view(), name="auto-fill"),
+    path("download/<str:filename>/", FileDownloadView.as_view(), name="file-download"),
 ]

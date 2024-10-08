@@ -61,7 +61,10 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.conf import settings
-from django.db.models import Case, When, Value
+from django.http import HttpResponse, FileResponse
+from django.views import View
+import os
+
 
 # ----------------- Models Serializer Views ----------------- #
 
@@ -80,13 +83,6 @@ class SectorView(APIView):
     def get(self, request):
         sectors = Sector.objects.all()
         serializer = SectorSerializer(sectors, many=True)
-        return Response(serializer.data)
-
-
-class CodeAPEView(APIView):
-    def get(self, request):
-        code_apes = CodeAPE.objects.all()
-        serializer = CodeAPESerializer(code_apes, many=True)
         return Response(serializer.data)
 
 
@@ -147,13 +143,6 @@ class CompanyView(APIView):
             return Response(
                 {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
-
-
-class JobOfferView(APIView):
-    def get(self, request):
-        job_offers = JobOffer.objects.all()
-        serializer = JobOfferSerializer(job_offers, many=True)
-        return Response(serializer.data)
 
 
 class JobOfferListCreateView(APIView):
@@ -369,13 +358,6 @@ class ApplicantSearchView(generics.ListAPIView):
     def get_queryset(self):
         print(self.request)
         queryset = super().get_queryset()
-
-
-class ApplicationView(APIView):
-    def get(self, request):
-        applications = Application.objects.all()
-        serializer = ApplicationSerializer(applications, many=True)
-        return Response(serializer.data)
 
 
 class ApplicantInfo(APIView):
@@ -596,47 +578,6 @@ class RegisterUserView(APIView):
             )
 
 
-class ApplicantListCreateAPIView(APIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        print("GET")
-        applicants = Applicant.objects.all()
-        temp_applicants = TempApplicant.objects.filter(applicant__isnull=True)
-        applicants_serializer = ApplicantSerializer(applicants, many=True)
-        temp_applicants_serializer = TempApplicantSerializer(temp_applicants, many=True)
-        return Response(
-            {
-                "applicants": applicants_serializer.data,
-                "temp_applicants": temp_applicants_serializer.data,
-            }
-        )
-
-    def post(self, request, format=None):
-        print("POST")
-        print(request.data)
-        serializer = TempApplicantSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            for temp_applicant_data in serializer.data:
-                email = temp_applicant_data.get("email")
-                first_name = temp_applicant_data.get("first_name")
-                link_inscription = temp_applicant_data.get("link_inscription")
-
-                send_registration_email(first_name, email, link_inscription)
-
-            return Response(
-                {
-                    "messages": [
-                        "Temporary applicants successfully added and emails sent"
-                    ]
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ApplicantView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
@@ -665,12 +606,13 @@ class ApplicantView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request, pk):
-        applicant = get_object_or_404(Applicant, pk=pk)
-        serializer = ApplicantSerializer(applicant, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if request.user.is_authenticated:
+            applicant = get_object_or_404(Applicant, pk=pk)
+            serializer = ApplicantSerializer(applicant, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FullApplicantCreateView(APIView):
@@ -718,8 +660,17 @@ class FullApplicantCreateView(APIView):
 
     def put(self, request, format=None):
         print("Put")
-        data = request.data
+        data = request.data.copy()
+        print(data)
+        data["user"] = request.user.id
+        try:
+            if data["resume"] == "" or data["resume"] is None:
+                data.pop("resume")
+        except KeyError:
+            pass
         applicant = Applicant.objects.get(user=request.user)
+        print(data["sector"])
+
         serializer = ApplicantSerializer(applicant, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -1152,3 +1103,38 @@ class MatchesView(APIView):
             return Response(
                 {"message": "User not authorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+class AIProcessAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = request.user
+        if user.is_authenticated:
+            file = request.FILES.get("resume")
+            if file:
+                print(file)
+                return Response({"message": "File received"}, status=status.HTTP_200_OK)
+            print("No file provided")
+            return Response(
+                {"message": "No file provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            {"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
+        )
+
+
+class FileDownloadView(View):
+    def get(self, request, filename):
+        # Define the path to your file
+        file_path = os.path.join("resumes/", filename)
+        print(file_path)
+
+        if os.path.exists(file_path):
+            # Use FileResponse for streaming file to the client
+            return FileResponse(
+                open(file_path, "rb"), as_attachment=True, filename=filename
+            )
+        else:
+            return HttpResponse(status=404)

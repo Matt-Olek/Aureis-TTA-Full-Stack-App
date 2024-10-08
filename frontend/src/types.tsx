@@ -13,13 +13,9 @@ export interface Offer {
 }
 
 export interface Applicant {
-  user: {
-    id: number;
-    email: string;
-  };
-  id: number;
-  formation?: Formation;
-  resume?: string; // Assuming the resume is a URL or file path
+  id?: number;
+  resume?: string | null;
+  formation: number | null;
   first_name: string;
   last_name: string;
   email: string;
@@ -30,14 +26,12 @@ export interface Applicant {
   target_educational_level: string;
   duration: string;
   contract_type: string;
-  sector: Sector[];
+  sector: number[];
   location: string;
   kilometers_away: number;
-  is_not_signed_in_school: boolean;
-  do_accept_school: boolean;
-  skills: number[]; // Assuming this relates to an array of skill IDs
-  created_at: string;
-  updated_at: string;
+  skills: number[];
+  created_at?: string;
+  updated_at?: string;
   link_inscription?: string;
   token?: string;
 }

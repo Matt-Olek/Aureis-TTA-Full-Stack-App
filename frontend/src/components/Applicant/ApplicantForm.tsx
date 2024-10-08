@@ -1,33 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
 import toast from "react-hot-toast";
 import Axios from "../../utils/Axios";
-
-interface InitialValues {
-  first_name: string;
-  last_name: string;
-  email: string;
-  city: string;
-  country: string;
-  phone: string;
-  diploma: string;
-  target_educational_level: string;
-  duration: string;
-  contract_type: string;
-  sector: string[];
-  location: string;
-  kilometers_away: number;
-  is_not_signed_in_school: boolean;
-  do_accept_school: boolean;
-}
-
-interface Sector {
-  id: string;
-  name: string;
-}
-
+import downloadFile from "../../utils/Download";
+import { Sector, Applicant } from "../../types";
 interface Choice {
   [key: string]: string;
 }
@@ -37,7 +13,7 @@ interface ApplicantFormProps {
 }
 
 const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
-  const [initialValues, setInitialValues] = useState<InitialValues>({
+  const [Applicant, setApplicant] = useState<Applicant>({
     first_name: "",
     last_name: "",
     email: "",
@@ -46,13 +22,14 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
     phone: "",
     diploma: "",
     target_educational_level: "",
-    duration: "-1",
+    duration: "",
     contract_type: "",
     sector: [],
     location: "",
-    kilometers_away: -1,
-    is_not_signed_in_school: false,
-    do_accept_school: false,
+    kilometers_away: 0,
+    resume: null,
+    formation: null,
+    skills: [],
   });
 
   const [sectors, setSectors] = useState<Sector[]>([]);
@@ -63,398 +40,435 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({ applicantId }) => {
   const [duration, setDuration] = useState<Choice[]>([]);
   const [formations, setFormations] = useState<Choice[]>([]);
   const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
-    Axios.get("/user/info/").then((response) => {
-      setInitialValues({
-        ...initialValues,
-        first_name: response.data.first_name,
-        last_name: response.data.last_name,
-        email: response.data.email,
-      });
-    });
-    Axios.get("/sector/").then((response) => {
-      setSectors(response.data);
-    });
-    Axios.get("/choices/", { params: { target_educational_level: true } }).then(
-      (response) => {
-        setTargetEducationalLevels(response.data);
-      }
-    );
-    Axios.get("/choices/", { params: { contract_type: true } }).then(
-      (response) => {
-        setContractTypes(response.data);
-      }
-    );
-    Axios.get("/choices/", { params: { duration: true } }).then((response) => {
-      setDuration(response.data);
-    });
-    Axios.get("/formations/").then((response) => {
-      setFormations(response.data);
-    });
+    const fetchData = async () => {
+      try {
+        const userInfo = await Axios.get("/user/info/");
+        setApplicant((prev) => ({
+          ...prev,
+          first_name: userInfo.data.first_name,
+          last_name: userInfo.data.last_name,
+          email: userInfo.data.email,
+        }));
 
-    Axios.get("/applicants/registration/").then((response) => {
-      if (response.data) {
-        setInitialValues(response.data.applicant);
-        console.log(response.data.applicant);
+        const [
+          sectorData,
+          educationalLevels,
+          contractTypesData,
+          durationData,
+          formationsData,
+        ] = await Promise.all([
+          Axios.get("/sector/"),
+          Axios.get("/choices/", {
+            params: { target_educational_level: true },
+          }),
+          Axios.get("/choices/", { params: { contract_type: true } }),
+          Axios.get("/choices/", { params: { duration: true } }),
+          Axios.get("/formations/"),
+        ]);
+
+        setSectors(sectorData.data);
+        console.log("Sectors:", sectorData.data);
+        setTargetEducationalLevels(educationalLevels.data);
+        setContractTypes(contractTypesData.data);
+        setDuration(durationData.data);
+        setFormations(formationsData.data);
+
+        try {
+          const applicantData = await Axios.get(
+            `/applicants/registration/${applicantId}`
+          );
+          setApplicant(applicantData.data.applicant);
+          console.log("Applicant data:", applicantData.data);
+        } catch (error) {
+          console.error("Applicant not found:", error);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    });
+    };
+
+    fetchData();
   }, []);
 
-  // Define the validation schema using Yup
-  const validationSchema = Yup.object({
-    city: Yup.string().required("La ville est requise"),
-    country: Yup.string().required("Le pays est requis"),
-    phone: Yup.string().required("Le numéro de téléphone est requis"),
-    diploma: Yup.string().required("Le diplôme est requis"),
-    target_educational_level: Yup.string().required(
-      "Le niveau d'études visé est requis"
-    ),
-    duration: Yup.string().required("La durée est requise"),
-    contract_type: Yup.string().required("Le type de contrat est requis"),
-    location: Yup.string().required("Le lieu de travail souhaité est requis"),
-  });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type, multiple } = e.target as
+      | HTMLInputElement
+      | HTMLSelectElement;
+    const options = (e.target as HTMLSelectElement).options;
+    const files = (e.target as HTMLInputElement).files;
+    console.log("Name:", name);
+    console.log("Value:", value);
 
-  const handleSubmit = (values: InitialValues) => {
-    if (applicantId) {
-      // Update existing applicant
-      Axios.put(`/applicants/registration/`, values)
-        .then(() => {
-          toast.success("Fiche candidat mise à jour avec succès!");
-          setTimeout(() => {
-            window.scrollTo(0, 0);
-            navigate("/#home"); // Redirect to the home page
-          }, 1000);
-        })
-        .catch((error) => {
-          console.error("Error updating applicant:", error);
-          toast.error("Erreur lors de la mise à jour de la fiche candidat.");
-        });
+    // Handle multi-select for sectors
+    if (name === "sector" && multiple) {
+      const selectedSectors: number[] = [];
+      for (let i = 0; i < options.length; i++) {
+        if (options[i].selected) {
+          selectedSectors.push(Number(options[i].value));
+        }
+      }
+      setApplicant((prev) => ({ ...prev, sector: selectedSectors }));
     } else {
-      // Create new applicant
-      Axios.post("/applicants/registration/", values)
-        .then(() => {
-          window.alert("Fiche candidat créée avec succès!");
-          toast.success("Fiche candidat créée avec succès!");
-          setTimeout(() => {
-            window.scrollTo(0, 0);
-            navigate("/#home");
-            // scroll to top
-          }, 1000);
-        })
-        .catch((error) => {
-          console.error("Error creating applicant:", error);
-          toast.error("Erreur lors de la création de la fiche candidat.");
+      // Handle file input
+      if (type === "file") {
+        if (files) {
+          setFile(files[0]);
+        }
+      } else {
+        setApplicant((prev) => ({ ...prev, [name]: value }));
+      }
+    }
+    console.log("Applicant:", Applicant);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const selectedFile = files[0]; // Get the file directly
+      setFile(selectedFile); // Set the state for future use if needed
+      console.log("File:", selectedFile);
+      const formData = new FormData();
+      formData.append("resume", selectedFile);
+
+      try {
+        const response = await Axios.post("/auto-fill/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
+        console.log("Auto-fill response:", response.data);
+      } catch (error) {
+        console.error("Error auto-filling form:", error);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    // Append all the form data fields
+    formData.append("first_name", Applicant.first_name);
+    formData.append("last_name", Applicant.last_name);
+    formData.append("email", Applicant.email);
+    formData.append("city", Applicant.city);
+    formData.append("country", Applicant.country);
+    formData.append("phone", Applicant.phone);
+    formData.append("diploma", Applicant.diploma);
+    formData.append(
+      "target_educational_level",
+      Applicant.target_educational_level
+        ? String(Applicant.target_educational_level)
+        : ""
+    );
+    formData.append("duration", Applicant.duration);
+    formData.append(
+      "contract_type",
+      Applicant.contract_type ? String(Applicant.contract_type) : ""
+    );
+    formData.append("location", Applicant.location);
+    formData.append("kilometers_away", String(Applicant.kilometers_away));
+    formData.append("formation", String(Applicant.formation));
+    console.log("Sector:", Applicant.sector);
+    Applicant.sector.forEach((sectorId) => {
+      formData.append("sector", String(sectorId));
+    });
+    // Append the resume file
+    if (file) {
+      formData.append("resume", file);
+    }
+
+    try {
+      if (applicantId) {
+        await Axios.put("/applicants/registration/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Fiche candidat mise à jour avec succès!");
+      } else {
+        await Axios.post("/applicants/registration/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Fiche candidat créée avec succès!");
+      }
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        navigate("/#home");
+      }, 1000);
+    } catch (error) {
+      console.error("Error during submission:", error);
+      toast.error(
+        "Erreur lors de la création ou mise à jour de la fiche candidat."
+      );
     }
   };
 
   return (
     <>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        enableReinitialize={true}
-        onSubmit={handleSubmit}
-      >
-        {() => (
-          <Form className="p-6 bg-neutral text-neutral-content shadow-md space-y-4 w-1/2 mx-auto text-xl my-10 rounded-3xl border border-accent">
-            <h1 className="text-4xl mt-10 font-bold mb-10 text-center lily">
-              Ma fiche <span className="text-green-300">candidat</span>
-            </h1>
-
-            <p className="mt-10 font-bold mb-10 text-center manrope">
-              Veuillez remplir les champs suivants avec attention
-            </p>
-            <div className="form-control">
-              <label htmlFor="formation" className="label">
-                <span className="label-text">Formation</span>
-              </label>
-              <Field
-                as="select"
-                name="formation"
-                className="select w-full select-bordered"
-              >
-                <option value="" disabled selected>
-                  Sélectionnez la formation dans laquelle vous êtes inscrit
-                </option>
-                {formations.map((formation) => (
-                  <option key={formation.id} value={formation.id}>
-                    {formation.name}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="formation"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-            <hr />
-
-            <div className="form-control">
-              <label htmlFor="first_name" className="label">
-                <span className="label-text">Prénom</span>
-              </label>
-              <Field
-                type="text"
-                name="first_name"
-                className="input input-bordered w-full"
-                disabled
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="last_name" className="label">
-                <span className="label-text">Nom</span>
-              </label>
-              <Field
-                type="text"
-                name="last_name"
-                className="input input-bordered w-full"
-                disabled
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="email" className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <Field
-                type="email"
-                name="email"
-                className="input input-bordered w-full"
-                disabled
-              />
-            </div>
-            <hr />
-
-            <div className="form-control">
-              <label htmlFor="city" className="label">
-                <span className="label-text">Ville de résidence</span>
-              </label>
-              <Field
-                type="text"
-                name="city"
-                className="input input-bordered w-full"
-              />
-              <ErrorMessage
-                name="city"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="country" className="label">
-                <span className="label-text">Pays</span>
-              </label>
-              <Field type="text" name="country" className="input w-full" />
-              <ErrorMessage
-                name="country"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="phone" className="label">
-                <span className="label-text">Numéro de téléphone</span>
-              </label>
-              <Field
-                type="text"
-                name="phone"
-                className="input input-bordered w-full"
-              />
-              <ErrorMessage
-                name="phone"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="diploma" className="label">
-                <span className="label-text">Dernier Diplôme obtenu</span>
-              </label>
-              <Field
-                type="text"
-                name="diploma"
-                className="input input-bordered w-full"
-              />
-              <ErrorMessage
-                name="diploma"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="target_educational_level" className="label">
-                <span className="label-text">Niveau visé</span>
-              </label>
-              <Field
-                as="select"
-                name="target_educational_level"
-                className="select select-bordered w-full"
-              >
-                <option value="">
-                  Sélectionnez le niveau d&apos;études visé
-                </option>
-                {targetEducationalLevels.map((level) => (
-                  <option key={level[0]} value={level[0]}>
-                    {level[1]}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="target_educational_level"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-            <hr />
-            <div className="form-control">
-              <label htmlFor="duration" className="label">
-                <span className="label-text">Durée</span>
-              </label>
-              <Field
-                as="select"
-                name="duration"
-                className="select select-bordered w-full"
-              >
-                <option value="">Sélectionnez la durée</option>
-                {duration.map((d) => (
-                  <option key={d[0]} value={d[0]}>
-                    {d[1]}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="duration"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-            <div className="form-control">
-              <label htmlFor="contract_type" className="label">
-                <span className="label-text">Type de contrat</span>
-              </label>
-              <Field
-                as="select"
-                name="contract_type"
-                className="select select-bordered w-full"
-              >
-                <option value="">Sélectionnez le type de contrat</option>
-                {contractTypes.map((type) => (
-                  <option key={type[0]} value={type[0]}>
-                    {type[1]}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="contract_type"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="sector" className="label">
-                <span className="label-text">Secteur</span>
-              </label>
-              <Field
-                as="select"
-                name="sector"
-                multiple={true}
-                className="select select-bordered w-full"
-              >
-                {sectors.map((sector) => (
-                  <option key={sector.id} value={sector.id}>
-                    {sector.name}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="sector"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="location" className="label">
-                <span className="label-text">Lieu de travail souhaité</span>
-              </label>
-              <Field
-                type="text"
-                name="location"
-                className="input input-bordered w-full"
-              />
-              <ErrorMessage
-                name="location"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label htmlFor="kilometers_away" className="label">
-                <span className="label-text">
-                  Distance maximum en kilomètres (-1 si pas de préférence, sinon
-                  5,10,50,100)
-                </span>
-              </label>
-              <Field
-                type="number"
-                name="kilometers_away"
-                className="input input-bordered w-full"
-              />
-              <ErrorMessage
-                name="kilometers_away"
-                component="div"
-                className="text-error mt-1"
-              />
-            </div>
-
-            <div className="form-control">
-              <label
-                htmlFor="is_not_signed_in_school"
-                className="label cursor-pointer"
-              >
-                <span className="label-text">Non inscrit dans une école</span>
-              </label>
-              <Field
-                type="checkbox"
-                name="is_not_signed_in_school"
-                className="checkbox checkbox-primary"
-              />
-            </div>
-
-            <div className="form-control">
-              <label
-                htmlFor="do_accept_school"
-                className="label cursor-pointer"
-              >
-                <span className="label-text">
-                  Accepter une école partenaire
-                </span>
-              </label>
-              <Field
-                type="checkbox"
-                name="do_accept_school"
-                className="checkbox checkbox-primary"
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <button type="submit" className="btn btn-primary btn-lg mt-6">
-                Soumettre
-              </button>
-            </div>
-          </Form>
+      <div className="p-6 bg-neutral text-neutral-content shadow-lg space-y-4 w-1/2 mx-auto text-xl my-10 rounded-3xl">
+        <h1 className="text-4xl mt-10 font-bold mb-10 text-center lily">
+          Ma fiche <span className="text-green-300">candidat</span>
+        </h1>
+        {Applicant.resume && (
+          <button
+            className="flex btn btn-primary btn-sm justy-end btn-outline"
+            onClick={() => Applicant.resume && downloadFile(Applicant.resume)}
+          >
+            Télécharger le CV
+          </button>
         )}
-      </Formik>
+        <div className="form-control">
+          <label htmlFor="resume" className="label">
+            <span className="label-text">
+              Télécharger le CV (PDF uniquement)
+            </span>
+          </label>
+          <input
+            type="file"
+            name="resume"
+            accept=".pdf"
+            onChange={handleFileChange}
+            className="file-input file-input-bordered file-input-primary w-full"
+          />
+        </div>
+        <div className="divider">Informations personnelles</div>
+        <form onSubmit={handleSubmit} className=" ">
+          <div className="form-control">
+            <label htmlFor="formation" className="label">
+              <span className="label-text">Formation</span>
+            </label>
+            <select
+              name="formation"
+              value={Applicant.formation ? Applicant.formation : ""}
+              onChange={handleChange}
+              className="select w-full select-bordered"
+            >
+              <option value="" disabled>
+                Sélectionnez la formation dans laquelle vous êtes inscrit
+              </option>
+              {formations.map((formation) => (
+                <option key={formation.id} value={formation.id}>
+                  {formation.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <hr />
+
+          <div className="form-control">
+            <label htmlFor="first_name" className="label">
+              <span className="label-text">Prénom</span>
+            </label>
+            <input
+              type="text"
+              name="first_name"
+              value={Applicant.first_name}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+              disabled
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="last_name" className="label">
+              <span className="label-text">Nom</span>
+            </label>
+            <input
+              type="text"
+              name="last_name"
+              value={Applicant.last_name}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+              disabled
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="email" className="label">
+              <span className="label-text">Email</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={Applicant.email}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+              disabled
+            />
+          </div>
+
+          <hr />
+
+          <div className="form-control">
+            <label htmlFor="city" className="label">
+              <span className="label-text">Ville de résidence</span>
+            </label>
+            <input
+              type="text"
+              name="city"
+              value={Applicant.city}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="country" className="label">
+              <span className="label-text">Pays</span>
+            </label>
+            <input
+              type="text"
+              name="country"
+              value={Applicant.country}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="phone" className="label">
+              <span className="label-text">Numéro de téléphone</span>
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={Applicant.phone}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="diploma" className="label">
+              <span className="label-text">Dernier Diplôme obtenu</span>
+            </label>
+            <input
+              type="text"
+              name="diploma"
+              value={Applicant.diploma}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="target_educational_level" className="label">
+              <span className="label-text">Niveau visé</span>
+            </label>
+            <select
+              name="target_educational_level"
+              value={Applicant.target_educational_level}
+              onChange={handleChange}
+              className="select select-bordered w-full"
+            >
+              <option value="">
+                Sélectionnez le niveau d&apos;études visé
+              </option>
+              {targetEducationalLevels.map((level) => (
+                <option key={level[0]} value={level[0]}>
+                  {level[1]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <hr />
+
+          <div className="form-control">
+            <label htmlFor="duration" className="label">
+              <span className="label-text">Durée</span>
+            </label>
+            <select
+              name="duration"
+              value={Applicant.duration}
+              onChange={handleChange}
+              className="select select-bordered w-full"
+            >
+              <option value="">Sélectionnez la durée</option>
+              {duration.map((d) => (
+                <option key={d[0]} value={d[0]}>
+                  {d[1]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="contract_type" className="label">
+              <span className="label-text">Type de contrat</span>
+            </label>
+            <select
+              name="contract_type"
+              value={Applicant.contract_type}
+              onChange={handleChange}
+              className="select select-bordered w-full"
+            >
+              <option value="">Sélectionnez le type de contrat</option>
+              {contractTypes.map((ct) => (
+                <option key={ct[0]} value={ct[0]}>
+                  {ct[1]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="sector" className="label">
+              <span className="label-text">Secteur</span>
+            </label>
+            <select
+              name="sector"
+              value={Applicant.sector.map(String)}
+              onChange={handleChange}
+              className="select select-bordered w-full"
+              multiple
+            >
+              {sectors.map((sector) => (
+                <option key={sector.id} value={sector.id}>
+                  {sector.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="location" className="label">
+              <span className="label-text">Localisation</span>
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={Applicant.location}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="form-control">
+            <label htmlFor="kilometers_away" className="label">
+              <span className="label-text">
+                Rayon d&apos;acceptation (en km)
+              </span>
+            </label>
+            <input
+              type="number"
+              name="kilometers_away"
+              value={Applicant.kilometers_away}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary w-full">
+            {applicantId ? "Mettre à jour" : "Créer"}
+          </button>
+        </form>
+      </div>
     </>
   );
 };

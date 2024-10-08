@@ -165,7 +165,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "api.CustomUser"
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Change to "django.core.mail.backends.smtp.EmailBackend" in production
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Change to "django.core.mail.backends.smtp.EmailBackend" in production
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "trouvetonalternanceweb@gmail.com"

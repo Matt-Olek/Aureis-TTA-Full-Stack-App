@@ -330,15 +330,6 @@ class Applicant(models.Model):
         choices=[(5, 5), (10, 10), (50, 50), (100, 100), (-1, "Pas de préférence")],
     )
 
-    # Schools
-    is_not_signed_in_school = models.BooleanField(
-        default=False, verbose_name="Je n'ai pas encore signé avec une école"
-    )
-    do_accept_school = models.BooleanField(
-        default=False,
-        verbose_name="Je ne souhaite pas être contacté par les écoles partenaires",
-    )
-
     skills = models.ManyToManyField(Skill, verbose_name="Compétences", blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Créé le")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Mis à jour le")
